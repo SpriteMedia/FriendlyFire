@@ -1,5 +1,5 @@
 var canvas = document.getElementById("canvas");    // Creates a link to the canvas element in HTML
-canvas.width = 1280; 							  // Sets the canvas width to 640 px. Note that it's a regular property not accessing the .style
+canvas.width = 2000; 							  // Sets the canvas width to 640 px. Note that it's a regular property not accessing the .style
 canvas.height = 640;	
 var surface = canvas.getContext("2d");
 
@@ -23,25 +23,29 @@ var images = ["empty","playerTwo", "dirt", "grass" ,"grasstop", "door", "doorope
 var sprites = [];
 const SIZE = 64; 
 var map = {
-	rows: 10,	
-	cols: 20,
+	rows: 13,	
+	cols: 30,
 	tiles:
 	[
-		[4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4],
-		[0,4,0,0,0,4,0,0,0,0,0,4,0,0,0,4,0,0,4,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		
+		[4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4,4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4],
+		[0,4,0,0,0,4,0,0,0,0,0,4,0,0,0,4,0,0,4,0,0,4,0,0,0,4,0,0,0,0,0,4,0,0,0,4,0,0,4,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
+		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
+		[0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
+		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
+		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
+		[0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
+		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
 	],
 	
-}
+};
 
+	
 var indexX = parseInt(playerOne.x/SIZE);
 var indexY = parseInt(playerOne.y/SIZE);
 var canMove = true;
@@ -73,7 +77,7 @@ function update()
 {
 	animatePlayer(); 
 	playerController();
-	//scrollMap();
+	draw();
 	render();
 	
 }
@@ -124,7 +128,7 @@ function playerController()
 {
 	if (playerOne.x > 0 && left == true)
 		playerOne.x -= playerOne.speed;
-	if (playerOne.x < canvas.width-SIZE && right == true)
+	if (right == true)
 		playerOne.x += playerOne.speed;
 	if (playerOne.y > 0 && up == true)
 		playerOne.y -= playerOne.speed;
@@ -152,6 +156,25 @@ function animatePlayer()
 	}
 }
 
+//내 맘대로
+function clamp(value, min, max){
+    if(value < min) return min;
+    else if(value > max) return max;
+    return value;
+}
+
+function draw() {
+    surface.setTransform(1,0,0,1,0,0);//reset the transform matrix as it is cumulative
+    surface.clearRect(0, 0, canvas.width, canvas.height);//clear the viewport AFTER the matrix is reset
+
+    //Clamp the camera position to the world bounds while centering the camera around the player                                             
+    var camX = clamp(-playerOne.x + canvas.width/2, -2000, 0);
+    var camY = clamp(-playerOne.y + canvas.height/2, 0, 0);
+
+    surface.translate( camX, camY );    
+
+    //Draw everything
+}
 /*function scrollMap() 
 {
 	// Iterate through all the tiles in map.
