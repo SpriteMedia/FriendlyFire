@@ -4,7 +4,7 @@ canvas.height = 640;
 var surface = canvas.getContext("2d");
 
 //--------------------------PLAYER DATA ----------------------------------------
-var playerOne = {img:null, x:0, y: 512, speed: 10};  //playerOne data
+var playerOne = {img:null, x:0, y: 512, speed: 10, sizeX: 64, sizeY: 64};  //playerOne data
 //var playerTwo = {img:null, x:100, y: 576, speed: 10}; //playerTwo date
 var up = false;
 var down = false;
@@ -59,11 +59,17 @@ window.addEventListener("keyup", onKeyUp);
 setInt = setInterval(update, 33.34);
 
 //==================INITIALIZE SPIRTES =====================
-for (var i = 0; i < images.length; i++)
+
+function init()
 {
-	sprites[i] = new Image();
-	sprites[i].src = '../img/'+images[i]+'.png';
+	for (var i = 0; i < images.length; i++)
+	{
+		sprites[i] = new Image();
+		sprites[i].src = '../img/'+images[i]+'.png';
+	}
 }
+
+init();
 
 playerOne.img = sprites[1];
 //==========================================================
@@ -126,16 +132,63 @@ function onKeyUp(event)
 
 function playerController() 
 {
-	if (playerOne.x > 0 && left == true)
+	if (playerOne.x > 0 && left == true && rayCastCheck(playerOne, 10, playerOne.speed/2))
 		playerOne.x -= playerOne.speed;
-	if (right == true)
+	if (right == true && playerOne.x < map.cols * SIZE && rayCastCheck(playerOne, 10, playerOne.speed/2))
 		playerOne.x += playerOne.speed;
-	if (playerOne.y > 0 && up == true)
-		playerOne.y -= playerOne.speed;
-	if (playerOne.y < canvas.height-SIZE && down == true)
-		playerOne.y += playerOne.speed;
+	if (playerOne.y > 0 && up == true && rayCastCheck(playerOne, 10, playerOne.speed/2)) //jump
+	{}//jump code here
+	
+		
 }
 
+function gravity()
+{
+	if(down)
+	{
+		//rayCastCheck() if it returns true , means you are on the air
+	}
+}
+
+function rayCastCheck(player, Gap, rayLength)
+{
+	var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
+	var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
+	var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
+	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
+	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
+
+	if(left)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		return true;
+	}
+	else if(right)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		return true;
+	}
+	else if(up)
+	{
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
+		return true;
+	}
+	else if(down)
+	{
+		console.log("player Y pos:", player.y, "and rayUp: ", downRay);
+		if( map.tiles[parseInt(downRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(downRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(downRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
+	return true;
+	}
+
+}
 
 function animatePlayer() 
 {
