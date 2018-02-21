@@ -1,13 +1,12 @@
 var canvas = document.getElementById("canvas");    // Creates a link to the canvas element in HTML
-canvas.width = 2000; 							  // Sets the canvas width to 640 px. Note that it's a regular property not accessing the .style
+canvas.width = 1280; 							  // Sets the canvas width to 640 px. Note that it's a regular property not accessing the .style
 canvas.height = 640;	
 var surface = canvas.getContext("2d");
 
 //--------------------------PLAYER DATA ----------------------------------------
-var playerOne = {img:null, x:0, y: 512, speed: 10, sizeX: 64, sizeY: 64};  //playerOne data
-//var playerTwo = {img:null, x:100, y: 576, speed: 10}; //playerTwo date
+var playerOne = {img:null, x:0, y: 300, speed: 10, sizeX: 64, sizeY: 64, jumping : false, y_velocity: 0, x_velocity: 0, falling: true};  //playerOne data 
 var up = false;
-var down = false;
+var down = false;	
 var left = false;
 var right = false;
 var playerSprite = 0;
@@ -16,15 +15,26 @@ var minSprite = 0;
 var spriteCount = 0;
 var fps = 2;
 
+var playerTwo = {img:null, x:0, y: 215, speed: 10};
+var up2 = false;
+var down2 = false;
+var left2 = false;
+var right2 = false;
+var playerTwoSprite = 0;
+var minSprite2 = 0;
+var maxSprite2 = 11;
 
+
+var ground = 520;
 //--------------------------PLAYER DATA ----------------------------------------
 
-var images = ["empty","playerTwo", "dirt", "grass" ,"grasstop", "door", "dooropen","monster"];
+
+var images = ["empty","playerTwo", "dirt", "grass" ,"grasstop", "door", "dooropen","monster", "purplecoin", "playerOne"];
 var sprites = [];
 const SIZE = 64; 
 var map = {
-	rows: 13,	
-	cols: 30,
+	rows: 21,	
+	cols: 40, 
 	tiles:
 	[
 		[4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4,4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4],
@@ -32,25 +42,30 @@ var map = {
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
+		[0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
+		[3,3,3,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
 		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
 		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
 		[0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
+		[2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
+		[0,0,0,5,0,3,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
+		[2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
+		[0,0,0,5,0,3,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
 		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
 	],
 	
 };
 
-	
-var indexX = parseInt(playerOne.x/SIZE);
-var indexY = parseInt(playerOne.y/SIZE);
-var canMove = true;
-var posX = 0;
-var posY = 0;
+
+var coin = {img:null, x: 960, y: 360};
+var coinSprite = 0;
+var coinMax = 16;
 
 
 window.addEventListener("keydown", onKeyDown);
@@ -59,39 +74,35 @@ window.addEventListener("keyup", onKeyUp);
 setInt = setInterval(update, 33.34);
 
 //==================INITIALIZE SPIRTES =====================
-
-function init()
+for (var i = 0; i < images.length; i++)
 {
-	for (var i = 0; i < images.length; i++)
-	{
-		sprites[i] = new Image();
-		sprites[i].src = '../img/'+images[i]+'.png';
-	}
+	sprites[i] = new Image();
+	sprites[i].src = '../img/'+images[i]+'.png';
 }
 
-init();
-
-playerOne.img = sprites[1];
+playerOne.img = sprites[9];
+playerTwo.img = sprites[1];
+coin.img = sprites[8];
 //==========================================================
 
 
-//======================CAMERA==============================
-
-//==========================================================
 
 function update()
 {
 	animatePlayer(); 
+	animatePlayer2(); 
+	animateCoin();
 	playerController();
+	//Jump]();
 	draw();
 	render();
-	
 }
 
 function onKeyDown(event)
 {
 	switch (event.keyCode)
 	{
+		//Player 1
 		case 65: //A
 			left = true;			
 			break;
@@ -105,7 +116,19 @@ function onKeyDown(event)
 			down = true;
 			break;
 			
-		//ADD PLAYER 2 INPUT
+		//Player 2
+		case 37: 
+			left2 = true;			
+			break;
+		case 39: 
+			right2 = true;
+			break;
+		case 38: 
+			up2 = true;
+			break;
+		case 40: 
+			down2 = true;
+			break;
 	}
 }
 
@@ -113,6 +136,7 @@ function onKeyUp(event)
 {
 	switch (event.keyCode)
 	{
+		//Player 1
 		case 65: //A
 			left = false;
 			break;
@@ -125,75 +149,31 @@ function onKeyUp(event)
 		case 83: //S
 			down = false;
 			break;	
+
 			
-		//ADD PLAYER 2 INPUT
+		//Player 2
+		case 37: 
+			left2 = false;
+			break;
+		case 39: 
+			right2 = false;
+			break;
+		case 38: 
+			up2 = false;
+			break;
+		case 40: 
+			down2 = false;
+			break;
 	}
 }
 
-function playerController() 
-{
-	if (playerOne.x > 0 && left == true && rayCastCheck(playerOne, 10, playerOne.speed/2))
-		playerOne.x -= playerOne.speed;
-	if (right == true && playerOne.x < map.cols * SIZE && rayCastCheck(playerOne, 10, playerOne.speed/2))
-		playerOne.x += playerOne.speed;
-	if (playerOne.y > 0 && up == true && rayCastCheck(playerOne, 10, playerOne.speed/2)) //jump
-	{}//jump code here
-	
-		
-}
 
-function gravity()
-{
-	if(down)
-	{
-		//rayCastCheck() if it returns true , means you are on the air
-	}
-}
-
-function rayCastCheck(player, Gap, rayLength)
-{
-	var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
-	var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
-	var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
-	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
-	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
-
-	if(left)
-	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		return true;
-	}
-	else if(right)
-	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		return true;
-	}
-	else if(up)
-	{
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
-		return true;
-	}
-	else if(down)
-	{
-		console.log("player Y pos:", player.y, "and rayUp: ", downRay);
-		if( map.tiles[parseInt(downRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(downRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(downRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
-	return true;
-	}
-
-}
-
+//==================ANIMATION============================
 function animatePlayer() 
 {
 	playerSprite++;
-	if(playerSprite == maxSprite){
+	if(playerSprite == maxSprite)
+	{
 		
 		if(right || left)
 		{
@@ -209,7 +189,34 @@ function animatePlayer()
 	}
 }
 
-//내 맘대로
+function animatePlayer2() 
+{
+	playerTwoSprite++;
+	if(playerTwoSprite == maxSprite2)
+	{
+		if(right2 || left2)
+		{
+			minSprite2 = 12;
+			maxSprite2 = 29;
+		}
+		else 	
+		{
+			minSprite2 = 0;
+			maxSprite2 = 11;
+		}
+		playerTwoSprite = minSprite2;
+	}
+}
+
+function animateCoin ()
+{
+	coinSprite++;
+	if(coinSprite == coinMax)
+		coinSprite = 0;
+}
+//======================CAMERA==============================
+
+
 function clamp(value, min, max){
     if(value < min) return min;
     else if(value > max) return max;
@@ -217,30 +224,147 @@ function clamp(value, min, max){
 }
 
 function draw() {
-    surface.setTransform(1,0,0,1,0,0);//reset the transform matrix as it is cumulative
+    surface.setTransform(1,0,0,1,1,0);//reset the transform matrix as it is cumulative
     surface.clearRect(0, 0, canvas.width, canvas.height);//clear the viewport AFTER the matrix is reset
 
     //Clamp the camera position to the world bounds while centering the camera around the player                                             
     var camX = clamp(-playerOne.x + canvas.width/2, -2000, 0);
-    var camY = clamp(-playerOne.y + canvas.height/2, 0, 0);
+    var camY = clamp(-playerOne.y + canvas.height/1.25, -map.row, 0);
 
     surface.translate( camX, camY );    
 
     //Draw everything
 }
-/*function scrollMap() 
+
+//==========================================================
+
+//=====================collision============================
+
+function playerController() 
 {
-	// Iterate through all the tiles in map.
-	for (var row = 0; row < map.rows; row++)
+	if (playerOne.x > 0 && left == true && rayCastCheck(playerOne, 10, playerOne.speed/2))                //left is clicked 
+		playerOne.x_velocity -= 1;
+	if (right == true && playerOne.x < map.cols * SIZE && rayCastCheck(playerOne, 10, playerOne.speed/2)) //right is clicked
+		playerOne.x_velocity += 1;
+	if (up == true && playerOne.jumping == false && rayCastCheck(playerOne, 10, playerOne.speed/2))      //jump 
 	{
-		for (var col = 0; col < map.cols; col++)
-		{
-			map[row][col].x -= scrollSpeed; // Subtract speed from tile's x.
-		}
+		playerOne.jumping = true;
+		playerOne.y_velocity -= 20;
 	}
-}*/
+
+	
+	playerOne.y_velocity += 1.5;
+	playerOne.x += playerOne.x_velocity;
+	playerOne.y += playerOne.y_velocity;
+	playerOne.x_velocity *= 0.9;
+	playerOne.y_velocity *= 0.9;
+	
+	if(playerOne.y > 510)
+	{
+		playerOne.jumping = false;
+		playerOne.y = 510;
+		playerOne.y_velocity = 0;
+	}
+}
+
+//function gravity()
+//{
+//	if( map.tiles[parseInt(downRay/SIZE)][parseInt(centerPos.x/SIZE)] == 0)
+//		{
+//		console.log("falling");
+//		
+//		}
+//		if( map.tiles[parseInt(downRay/SIZE)][parseInt((player.x + Gap)/SIZE)] == 0)
+//		{
+//		console.log("falling");
+//		
+//		}	
+//		if( map.tiles[parseInt(downRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] == 0)
+//		{
+//		console.log("falling");
+//		
+//		}
+//	
+//}
+ 
+
+function rayCastCheck(player, Gap, rayLength)
+{
+	var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
+	var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
+	var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
+	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
+	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
+	
+	if(left)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) 
+		{
+			playerOne.x_velocity = 0;             
+			return false;
+		}
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0)
+		{
+			playerOne.x_velocity = 0;      
+			return false;
+		}
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) 
+		{
+			playerOne.x_velocity = 0;	
+			return false;
+		}
+		return true;
+	}
+	else if(right)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) 
+		{
+			playerOne.x_velocity = 0;			// right top rayCast
+			return false;
+		}
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) 
+		{
+			playerOne.x_velocity = 0;			// right centre rayCast
+			return false;
+		}
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) 
+		{
+			playerOne.x_velocity = 0;	
+			return false;
+		}			// right bottom rayCast
+		return true;
+	}
+	else if(up)
+	{
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) 
+		{
+			playerOne.x_velocity = 0;
+			return false;
+		}
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0)
+		{		
+			playerOne.x_velocity = 0;
+			return false;
+		}
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0)
+		{
+			playerOne.x_velocity = 0;
+			return false;
+		}
+		return true;
+	}
+	
+
+		
+	
+
+}
+//==========================================================
+
+//======================PHYSICS=============================
 
 
+//==========================================================
 
 function render()
 {
@@ -254,4 +378,6 @@ function render()
 			}
 		}	
 		surface.drawImage(playerOne.img, SIZE*playerSprite, 0, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
+		surface.drawImage(playerTwo.img, SIZE*playerTwoSprite, 0, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
+		surface.drawImage(coin.img, SIZE*coinSprite, 0, SIZE, SIZE, coin.x, coin.y, SIZE, SIZE); //draw coin
 }
