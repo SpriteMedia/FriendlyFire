@@ -1,12 +1,14 @@
 var canvas = document.getElementById("canvas");    // Creates a link to the canvas element in HTML
-canvas.width = 1280; 							  // Sets the canvas width to 640 px. Note that it's a regular property not accessing the .style
+canvas.width = 2000; 							  // Sets the canvas width to 640 px. Note that it's a regular property not accessing the .style
 canvas.height = 640;	
 var surface = canvas.getContext("2d");
 
 //--------------------------PLAYER DATA ----------------------------------------
-var playerOne = {img:null, x:0, y: 300, speed: 10, sizeX: 64, sizeY: 64, jumping : false, y_velocity: 0, x_velocity: 0, falling: true};  //playerOne data 
+var playerOne = {img:null, x:0, y: 512, speed: 10, sizeX: 64, sizeY: 64, isGround: false};  //playerOne data
+//var playerTwo = {img:null, x:100, y: 576, speed: 10}; //playerTwo date
+var upPower = 20;
 var up = false;
-var down = false;	
+var down = false;
 var left = false;
 var right = false;
 var playerSprite = 0;
@@ -15,26 +17,15 @@ var minSprite = 0;
 var spriteCount = 0;
 var fps = 2;
 
-var playerTwo = {img:null, x:0, y: 215, speed: 10, sizeX: 64, sizeY: 64, jumping : false, y_velocity: 0, x_velocity: 0, falling: true};
-var up2 = false;
-var down2 = false;
-var left2 = false;
-var right2 = false;
-var playerTwoSprite = 0;
-var minSprite2 = 0;
-var maxSprite2 = 11;
 
-
-var ground = 520;
 //--------------------------PLAYER DATA ----------------------------------------
 
-
-var images = ["empty","playerTwo", "dirt", "grass" ,"grasstop", "door", "dooropen","monster", "purplecoin", "playerOne"];
+var images = ["empty","playerTwo", "dirt", "grass" ,"grasstop", "door", "dooropen","monster"];
 var sprites = [];
 const SIZE = 64; 
 var map = {
-	rows: 21,	
-	cols: 40, 
+	rows: 13,	
+	cols: 30,
 	tiles:
 	[
 		[4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4,4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4],
@@ -42,30 +33,25 @@ var map = {
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[3,3,3,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
 		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
 		[0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
+		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
+		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
+		[0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
 		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
 	],
 	
 };
 
-
-var coin = {img:null, x: 960, y: 360};
-var coinSprite = 0;
-var coinMax = 16;
+	
+var indexX = parseInt(playerOne.x/SIZE);
+var indexY = parseInt(playerOne.y/SIZE);
+var canMove = true;
+var posX = 0;
+var posY = 0;
 
 
 window.addEventListener("keydown", onKeyDown);
@@ -74,26 +60,30 @@ window.addEventListener("keyup", onKeyUp);
 setInt = setInterval(update, 33.34);
 
 //==================INITIALIZE SPIRTES =====================
-for (var i = 0; i < images.length; i++)
+
+function init()
 {
-	sprites[i] = new Image();
-	sprites[i].src = '../img/'+images[i]+'.png';
+	for (var i = 0; i < images.length; i++)
+	{
+		sprites[i] = new Image();
+		sprites[i].src = '../img/'+images[i]+'.png';
+	}
 }
 
-playerOne.img = sprites[9];
-playerTwo.img = sprites[1];
-coin.img = sprites[8];
+init();
+
+playerOne.img = sprites[1];
 //==========================================================
 
 
+//======================CAMERA==============================
+
+//==========================================================
 
 function update()
 {
 	animatePlayer(); 
-	animatePlayer2(); 
-	animateCoin();
-	playerController(playerOne, left, right , up);
-	playerController(playerTwo, left2, right2, up2);
+	playerController();
 	draw();
 	render();
 }
@@ -102,7 +92,6 @@ function onKeyDown(event)
 {
 	switch (event.keyCode)
 	{
-		//Player 1
 		case 65: //A
 			left = true;			
 			break;
@@ -116,19 +105,7 @@ function onKeyDown(event)
 			down = true;
 			break;
 			
-		//Player 2
-		case 37: 
-			left2 = true;			
-			break;
-		case 39: 
-			right2 = true;
-			break;
-		case 38: 
-			up2 = true;
-			break;
-		case 40: 
-			down2 = true;
-			break;
+		//ADD PLAYER 2 INPUT
 	}
 }
 
@@ -136,7 +113,6 @@ function onKeyUp(event)
 {
 	switch (event.keyCode)
 	{
-		//Player 1
 		case 65: //A
 			left = false;
 			break;
@@ -149,31 +125,89 @@ function onKeyUp(event)
 		case 83: //S
 			down = false;
 			break;	
-
 			
-		//Player 2
-		case 37: 
-			left2 = false;
-			break;
-		case 39: 
-			right2 = false;
-			break;
-		case 38: 
-			up2 = false;
-			break;
-		case 40: 
-			down2 = false;
-			break;
+		//ADD PLAYER 2 INPUT
 	}
 }
 
+function playerController() 
+{
+	if (playerOne.x > 0 && left == true && rayCastCheck(playerOne, 10, playerOne.speed/2))
+		playerOne.x -= playerOne.speed;
+	if (right == true && playerOne.x < map.cols * SIZE && rayCastCheck(playerOne, 10, playerOne.speed/2))
+		playerOne.x += playerOne.speed;
+	if (playerOne.y > 0 && up == true && rayCastCheck(playerOne, 10, playerOne.speed/2)) //jump
+	{
+		playerOne.y -= upPower;
+		
+	}
+	
+	groundCheck(playerOne, 3, 3);//	
+	gravity(playerOne, 10);
+}
 
-//==================ANIMATION============================
+function gravity(player, gravityPower)
+{
+	if(!player.isGround)
+	player.y += gravityPower;
+
+	if(player.isGround && parseInt(player.y/SIZE) * SIZE > player.y/SIZE * SIZE)//fix position y;
+	{
+		player.y = parseInt(player.y/SIZE);
+	}
+}
+
+function groundCheck(player, gap, rayLength)//n is number of raycasts
+{
+	var bottomY = parseInt((player.y + player.sizeY + rayLength)/SIZE);
+	if(bottomY > map.rows) return false;
+	
+	player.isGround = false;
+	//if(map.tiles[bottomY][parseInt((player.x + gap)/SIZE)] =! 0) player.isGround = true; 
+		//i can't find why this line causes errors to drawImage function hopefully you can find it rami;
+	if(map.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
+	if(map.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
+	
+	console.log("Player On GROUND: ", player.isGround); 
+	
+	
+}
+
+function rayCastCheck(player, Gap, rayLength)
+{
+	var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
+	var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
+	var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
+	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
+	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
+
+	if(left)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		return true;
+	}
+	else if(right)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		return true;
+	}
+	else if(up)
+	{
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
+		return true;
+	}
+}
+
 function animatePlayer() 
 {
 	playerSprite++;
-	if(playerSprite == maxSprite)
-	{
+	if(playerSprite == maxSprite){
 		
 		if(right || left)
 		{
@@ -189,34 +223,7 @@ function animatePlayer()
 	}
 }
 
-function animatePlayer2() 
-{
-	playerTwoSprite++;
-	if(playerTwoSprite == maxSprite2)
-	{
-		if(right2 || left2)
-		{
-			minSprite2 = 12;
-			maxSprite2 = 29;
-		}
-		else 	
-		{
-			minSprite2 = 0;
-			maxSprite2 = 11;
-		}
-		playerTwoSprite = minSprite2;
-	}
-}
-
-function animateCoin ()
-{
-	coinSprite++;
-	if(coinSprite == coinMax)
-		coinSprite = 0;
-}
-//======================CAMERA==============================
-
-
+//내 맘대로
 function clamp(value, min, max){
     if(value < min) return min;
     else if(value > max) return max;
@@ -224,144 +231,30 @@ function clamp(value, min, max){
 }
 
 function draw() {
-    surface.setTransform(1,0,0,1,1,0);//reset the transform matrix as it is cumulative
+    surface.setTransform(1,0,0,1,0,0);//reset the transform matrix as it is cumulative
     surface.clearRect(0, 0, canvas.width, canvas.height);//clear the viewport AFTER the matrix is reset
 
     //Clamp the camera position to the world bounds while centering the camera around the player                                             
     var camX = clamp(-playerOne.x + canvas.width/2, -2000, 0);
-    var camY = clamp(-playerOne.y + canvas.height/1.25, -map.row, 0);
+    var camY = clamp(-playerOne.y + canvas.height/2, 0, 0);
 
     surface.translate( camX, camY );    
 
     //Draw everything
 }
-
-//==========================================================
-
-//=====================collision============================
-
-function playerController(player, Inleft, Inright, Inup) 
+/*function scrollMap() 
 {
-	
-	if (player.x > 0 && Inleft == true && rayCastCheck(player, 10, player.speed/2))                //left is clicked 
-		player.x_velocity -= 1;
-	if (Inright == true && player.x < map.cols * SIZE && rayCastCheck(player, 10, player.speed/2)) //right is clicked
-		player.x_velocity += 1;
-	if (Inup == true && player.jumping == false && rayCastCheck(player, 10, player.speed/2))      //jump 
+	// Iterate through all the tiles in map.
+	for (var row = 0; row < map.rows; row++)
 	{
-		player.jumping = true;
-		player.y_velocity -= 20;
+		for (var col = 0; col < map.cols; col++)
+		{
+			map[row][col].x -= scrollSpeed; // Subtract speed from tile's x.
+		}
 	}
-
-	
-	player.y_velocity += 1.5;
-	player.x += player.x_velocity;
-	player.y += player.y_velocity;
-	player.x_velocity *= 0.9;
-	player.y_velocity *= 0.9;
-	
-	if(player.y > 510)
-	{
-		player.jumping = false;
-		player.y = 510;
-		player.y_velocity = 0;
-	}
-}
-
-//function gravity()
-//{
-//	if( map.tiles[parseInt(downRay/SIZE)][parseInt(centerPos.x/SIZE)] == 0)
-//		{
-//		console.log("falling");
-//		
-//		}
-//		if( map.tiles[parseInt(downRay/SIZE)][parseInt((player.x + Gap)/SIZE)] == 0)
-//		{
-//		console.log("falling");
-//		
-//		}	
-//		if( map.tiles[parseInt(downRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] == 0)
-//		{
-//		console.log("falling");
-//		
-//		}
-//	
-//}
- 
-
-function rayCastCheck(player, Gap, rayLength)
-{
-	var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
-	var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
-	var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
-	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
-	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
-	
-	if(left || left2)
-	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) 
-		{
-			player.x_velocity = 0;             
-			return false;
-		}
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0)
-		{
-			player.x_velocity = 0;      
-			return false;
-		}
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) 
-		{
-			player.x_velocity = 0;	
-			return false;
-		}
-		return true;
-	}
-	else if(right || right2)
-	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) 
-		{
-			player.x_velocity = 0;			// right top rayCast
-			return false;
-		}
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) 
-		{
-			player.x_velocity = 0;			// right centre rayCast
-			return false;
-		}
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) 
-		{
-			player.x_velocity = 0;	
-			return false;
-		}			// right bottom rayCast
-		return true;
-	}
-	else if(up || up2)
-	{
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) 
-		{
-			player.x_velocity = 0;
-			return false;
-		}
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0)
-		{		
-			player.x_velocity = 0;
-			return false;
-		}
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0)
-		{
-			player.x_velocity = 0;
-			return false;
-		}
-		return true;
-	}	
-
-}
-//==========================================================
-
-//======================PHYSICS=============================
+}*/
 
 
-//==========================================================
 
 function render()
 {
@@ -375,6 +268,4 @@ function render()
 			}
 		}	
 		surface.drawImage(playerOne.img, SIZE*playerSprite, 0, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
-		surface.drawImage(playerTwo.img, SIZE*playerTwoSprite, 0, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
-		surface.drawImage(coin.img, SIZE*coinSprite, 0, SIZE, SIZE, coin.x, coin.y, SIZE, SIZE); //draw coin
 }
