@@ -15,7 +15,7 @@ var minSprite = 0;
 var spriteCount = 0;
 var fps = 2;
 
-var playerTwo = {img:null, x:0, y: 215, speed: 10};
+var playerTwo = {img:null, x:0, y: 215, speed: 10, sizeX: 64, sizeY: 64, jumping : false, y_velocity: 0, x_velocity: 0, falling: true};
 var up2 = false;
 var down2 = false;
 var left2 = false;
@@ -92,8 +92,8 @@ function update()
 	animatePlayer(); 
 	animatePlayer2(); 
 	animateCoin();
-	playerController();
-	//Jump]();
+	playerController(playerOne, left, right , up);
+	playerController(playerTwo, left2, right2, up2);
 	draw();
 	render();
 }
@@ -240,30 +240,31 @@ function draw() {
 
 //=====================collision============================
 
-function playerController() 
+function playerController(player, Inleft, Inright, Inup) 
 {
-	if (playerOne.x > 0 && left == true && rayCastCheck(playerOne, 10, playerOne.speed/2))                //left is clicked 
-		playerOne.x_velocity -= 1;
-	if (right == true && playerOne.x < map.cols * SIZE && rayCastCheck(playerOne, 10, playerOne.speed/2)) //right is clicked
-		playerOne.x_velocity += 1;
-	if (up == true && playerOne.jumping == false && rayCastCheck(playerOne, 10, playerOne.speed/2))      //jump 
+	
+	if (player.x > 0 && Inleft == true && rayCastCheck(player, 10, player.speed/2))                //left is clicked 
+		player.x_velocity -= 1;
+	if (Inright == true && player.x < map.cols * SIZE && rayCastCheck(player, 10, player.speed/2)) //right is clicked
+		player.x_velocity += 1;
+	if (Inup == true && player.jumping == false && rayCastCheck(player, 10, player.speed/2))      //jump 
 	{
-		playerOne.jumping = true;
-		playerOne.y_velocity -= 20;
+		player.jumping = true;
+		player.y_velocity -= 20;
 	}
 
 	
-	playerOne.y_velocity += 1.5;
-	playerOne.x += playerOne.x_velocity;
-	playerOne.y += playerOne.y_velocity;
-	playerOne.x_velocity *= 0.9;
-	playerOne.y_velocity *= 0.9;
+	player.y_velocity += 1.5;
+	player.x += player.x_velocity;
+	player.y += player.y_velocity;
+	player.x_velocity *= 0.9;
+	player.y_velocity *= 0.9;
 	
-	if(playerOne.y > 510)
+	if(player.y > 510)
 	{
-		playerOne.jumping = false;
-		playerOne.y = 510;
-		playerOne.y_velocity = 0;
+		player.jumping = false;
+		player.y = 510;
+		player.y_velocity = 0;
 	}
 }
 
@@ -296,67 +297,63 @@ function rayCastCheck(player, Gap, rayLength)
 	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
 	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
 	
-	if(left)
+	if(left || left2)
 	{
 		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) 
 		{
-			playerOne.x_velocity = 0;             
+			player.x_velocity = 0;             
 			return false;
 		}
 		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0)
 		{
-			playerOne.x_velocity = 0;      
+			player.x_velocity = 0;      
 			return false;
 		}
 		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) 
 		{
-			playerOne.x_velocity = 0;	
+			player.x_velocity = 0;	
 			return false;
 		}
 		return true;
 	}
-	else if(right)
+	else if(right || right2)
 	{
 		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) 
 		{
-			playerOne.x_velocity = 0;			// right top rayCast
+			player.x_velocity = 0;			// right top rayCast
 			return false;
 		}
 		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) 
 		{
-			playerOne.x_velocity = 0;			// right centre rayCast
+			player.x_velocity = 0;			// right centre rayCast
 			return false;
 		}
 		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) 
 		{
-			playerOne.x_velocity = 0;	
+			player.x_velocity = 0;	
 			return false;
 		}			// right bottom rayCast
 		return true;
 	}
-	else if(up)
+	else if(up || up2)
 	{
 		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) 
 		{
-			playerOne.x_velocity = 0;
+			player.x_velocity = 0;
 			return false;
 		}
 		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0)
 		{		
-			playerOne.x_velocity = 0;
+			player.x_velocity = 0;
 			return false;
 		}
 		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0)
 		{
-			playerOne.x_velocity = 0;
+			player.x_velocity = 0;
 			return false;
 		}
 		return true;
-	}
-	
-
-		
-	
+	}	
 
 }
 //==========================================================
