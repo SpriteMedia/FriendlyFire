@@ -3,179 +3,186 @@ canvas.width = 1280; 							  // Sets the canvas width to 640 px. Note that it's
 canvas.height = 640;	
 var surface = canvas.getContext("2d");
 
-//--------------------------------------------PLAYER DATA ------------------------------------------------------------------------
-// x = start position, y = start position, speed = players speed (becareful when changing)
-var playerOne = {img:null, x:0, y: 512, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false};  
-var playerTwo = {img:null, x:0, y: 512, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false};  
-var controls;                     //Object for buttons
-var playerSprite = 0;			  // FOR ANIMATION (IGNORE)
-var maxSprite = 11;				  // FOR ANIMATION (IGNORE)
-var minSprite = 0;			      // FOR ANIMATION (IGNORE)
-var playerTwoSprite = 0;          // FOR ANIMATION (IGNORE)
-var minSprite2 = 0;               // FOR ANIMATION (IGNORE)
-var maxSprite2 = 11;              // FOR ANIMATION (IGNORE)
-var spriteCount = 0;              // FOR ANIMATION (IGNORE)
-var fps = 2;                      // FOR ANIMATION (IGNORE)
 
 
-//---------------------------------------------GAME DATA ------------------------------------------------------------------------
+//██████████████████████████████PLAYER DATA █████████████████████████████████████████████
+var playerOne = {img:null, x:580, y: 132, speed: 10};  //playerOne data
+//var playerTwo = {img:null, x:100, y: 576, speed: 10}; //playerTwo date
+var up = false;
+var down = false;
+var left = false;
+var right = false;
+var off = false;	
+var playerSprite = 0;
+var minSprite = 0;
+var maxSprite = 11;
+var spriteCount = 0;
+var fps = 2;
 
-//to add asset, place name here of image saved under img folder and call it in map array by its placement here. ex: "dirt" = 2
-var images = ["empty","playerTwo", "dirt", "grass" ,"grasstop", "door", "dooropen","monster", "purplecoin", "playerOne", "Saw"]; 
-var sprites = []; 
+var shop = {img:null , x: 500, y: 168};
+var shopkeep = {img:null, x:canvas.width/2, y:canvas.height/2};
+var door1 = {img:null , x: 1150, y: 128};
+
+
+
+
+//██████████████████████████████PLAYER DATA █████████████████████████████████████████████
+
+var images = ["grass", "playerOne", "Door", "empty", "shop", "Shopkeep"];
+var sprites = [];
 const SIZE = 64; 
 var map = {
-	rows: 21,	
-	cols: 40, 
+	rows: 10,
+	cols: 20,
 	tiles:
 	[
-		[4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4,4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4],
-		[0,4,0,0,0,4,0,0,0,0,0,4,0,0,0,4,0,0,4,0,0,4,0,0,0,4,0,0,0,0,0,4,0,0,0,4,0,0,4,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //This array is used to draw the map. Just read through the image[] and place 
-		[0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0],            //that asset where you want it in the map by using its place number.
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0],            //ex. 2,2,2,2,2,2,2,2 to draw the ground
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[3,3,3,2,2,2,3,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1],
+		[1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1],
+		[1,1,1,3,3,3,1,1,1,1,1,1,1,1,3,3,3,1,1,1],
+		[1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1],
+		[1,3,3,1,1,1,3,3,3,3,3,3,3,3,1,1,1,3,3,1],
+		[1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1],
+		[1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1],
+		[1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		
 	],
 	
-};
 
 
-var coin = {img:null, x: 960, y: 360}; 
-var coinSprite = 0;
-var coinMax = 16;
+	
+}
+
+var indexX = parseInt(playerOne.x/SIZE);
+var indexY = parseInt(playerOne.y/SIZE);
+var canMove = true;
+var posX = 0;
+var posY = 0;
+
+
+window.addEventListener("keydown", onKeyDown);
+window.addEventListener("keyup", onKeyUp);
 
 setInt = setInterval(update, 33.34);
 
-//=======================================INITIALIZE SPIRTES ============================================
-for (var i = 0; i < images.length; i++)                                                                //takes images from image[] and turns them to assets in sprite[]
+//██████████████████████████████INITIALIZE SPIRTES ██████████████████████████████
+for (var i = 0; i < images.length; i++)
 {
 	sprites[i] = new Image();
 	sprites[i].src = '../img/'+images[i]+'.png';
 }
-																									   //animated sprite stay outside of map array
-playerOne.img = sprites[9];                                                                            //spritesheet for playerOne
-playerTwo.img = sprites[1];																			   //spritesheet for playerTwo
-coin.img = sprites[8];																				   //spritesheet for coin
-//===========================================UPDATE=====================================================
+
+playerOne.img = sprites[1];
+shopkeep.img = sprites[3];
+shop.img = sprites[4];
+door1.img = sprites[2]
+//████████████████████████████████████████████████████████████
 
 
+
+
+//████████████████████████████████████████████████████████████
 
 function update()
 {
 	animatePlayer(); 
-	animatePlayer2(); 
-	animateCoin();
-	playerController(playerOne, controls.left, controls.right , controls.up);
-	playerController(playerTwo, controls.left2, controls.right2, controls.up2);
+	playerController();
+	doorInteract();
+	interactCollision();
 	draw();
 	render();
 }
 
-
-//===========================================CONTROL INPUT ================================================
-controls = {
-
-	up: false, 
-	up2: false, 
-	left: false, 
-	left2: false, 
-	right: false, 
-	right2: false,
-
-	keyListner:function(event) 
-	{
-		var keystate = (event.type == "keydown")?true:false;
-		
-		switch(event.keyCode) 
+function onKeyDown(event)
+{
+	if(playerOne.img != sprites[3]) { //make this more efficient 
+		switch (event.keyCode)
 		{
-			case 65: //A
-				controls.left = keystate;
+		
+		case 65: //A
+			left = true;			
 			break;
-			case 68: //D
-				controls.right = keystate;
+		case 68: //D
+			right = true;
 			break;
-			case 87: //W
-				controls.up = keystate;
+		case 87: //W
+			up = true;
 			break;
-			case 37: //left
-				controls.left2 = keystate;
+		case 83: //S
+			down = true;
 			break;
-			case 39: //right
-				controls.right2 = keystate;
-			break;
-			case 38: //up
-				controls.up2 = keystate;
-			break;
+		//ADD PLAYER 2 INPUT unless menu
+		
 		}
+	}
+	else if(playerOne.img = sprites[3])
+	{
+	switch (event.keyCode)
+	{
+		case 32:
+		console.log("keypress");
+		enable(playerOne, 1, 100,100);// this changes the spawn of his location and changes his sprite back to normal (object, sprite#, x, y)
+			break;
+	}
+	}
+	
+}
+
+function onKeyUp(event)
+{
+	switch (event.keyCode)
+	{
+		case 65: //A
+			left = false;
+			break;
+		case 68: //D
+			right = false;
+			break;
+		case 87: //W
+			up = false;
+			break;
+		case 83: //S
+			down = false;
+			break;	
+			
+		//ADD PLAYER 2 INPUT
 	}
 }
 
+function playerController() 
+{
+	if (left == true)
+		playerOne.x -= playerOne.speed;
+	if (right == true)
+		playerOne.x += playerOne.speed;
+	if (up == true)
+		playerOne.y -= playerOne.speed;
+	if (down == true)
+		playerOne.y += playerOne.speed;
+}
 
-//================================================ANIMATION=============================================
+
 function animatePlayer() 
 {
-	playerSprite++;
+	playerSprite++; 
 	if(playerSprite == maxSprite)
 	{
-		
-		if(controls.right || controls.left)
+		if(right||left)
 		{
 			minSprite = 12;
 			maxSprite = 29;
 		}
-		else 	
+		else
 		{
 			minSprite = 0;
 			maxSprite = 11;
 		}
 		playerSprite = minSprite;
+		
 	}
 }
-
-function animatePlayer2() 
-{
-	playerTwoSprite++;
-	if(playerTwoSprite == maxSprite2)
-	{
-		if(controls.right2 || controls.left2)
-		{
-			minSprite2 = 12;
-			maxSprite2 = 29;
-		}
-		else 	
-		{
-			minSprite2 = 0;
-			maxSprite2 = 11;
-		}
-		playerTwoSprite = minSprite2;
-	}
-}
-
-function animateCoin ()
-{
-	coinSprite++;
-	if(coinSprite == coinMax)
-		coinSprite = 0;
-}
-//==============================================CAMERA==================================================
-
-
-
+//██████████████████████████████CAMERA██████████████████████████████
 function clamp(value, min, max){
     if(value < min) return min;
     else if(value > max) return max;
@@ -194,110 +201,47 @@ function draw() {
 
     //Draw everything
 }
-
-
-//============================================CONTROLLER=================================================
-
-function playerController(player, inleft, inright, inup) 
+//████████████████████████████████████████████████████████████
+/*
+function collision()
 {
-	if (player.x > 0 && inleft == true && rayCastCheck(player, 10, player.speed/2))
-		player.x -= player.speed;
-	if (inright == true && player.x < map.cols * SIZE && rayCastCheck(player, 10, player.speed/2))
-		player.x += player.speed;
-	if (player.y > 0 && inup == true && rayCastCheck(player, 10, player.speed/2)) //jump
+	if(player.x && player.y > map.tiles[1])
 	{
-		if(!player.isJumping)
-		{
-			player.isJumping = true;
-			player.velocityY = -20;
-		}
+		
 	}
-	console.log(player.velocityY);
-	var gravityPower = 3;
-	jump(player, gravityPower);
-	gravity(player, 10);
-	groundCheck(player, 3, gravityPower);//	this.player
-}
-
-function jump(player, gravityPower)
-{
-	if(player.isJumping)
-	{
-		player.y += player.velocityY;
-		player.y_velocity *= 0.7;
-		player.velocityY += gravityPower;
-	}
-}
-
-//==========================================GRAVITY=====================================================
-
-function gravity(player, gravityPower)
-{
-	if(!player.isGround)
-	{
-		player.y += gravityPower;
-	}
-
-
-	if(player.isGround && parseInt(player.y/SIZE) * SIZE < player.y)//fix position y;
-	{
-		player.y = parseInt(player.y/SIZE) * SIZE;
-	}
-}
-
-//===========================================COLLISION==================================================
-function groundCheck(player, gap, rayLength)//n is number of raycasts
-{
-	var bottomY = parseInt((player.y + player.sizeY + rayLength)/SIZE);
-	if(bottomY > map.rows) return false;
 	
-	player.isGround = false;
-	if(map.tiles[bottomY][parseInt((player.x + gap)/SIZE)] != 0) player.isGround = true; 
-	if(map.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
-	if(map.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
-	
-	if(player.isGround)
-	{
-		player.isJumping = false;
-		player.velocityY = 0;
 
-	}	
 }
-
-function rayCastCheck(player, Gap, rayLength)
+*/
+function doorInteract()
 {
-	var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
-	var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
-	var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
-	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
-	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
+	if(playerOne.x < door1.x + 64 && playerOne.x > door1.x && playerOne.y < door1.y + 64 && playerOne.y > door1.y)
+	{
+		playerOne.img = sprites[3];
+		var imported = document.createElement("script")
+		imported.src = "testone.js";//this runs the second script
+		document.head.appendChild(imported);
+		
+	}
+	
+}
 
-	if(controls.left || controls.left2)
+function interactCollision()
+{
+	if(playerOne.x < shop.x + 384 && playerOne.x > shop.x && playerOne.y < shop.y + 384 &&  playerOne.y > shop.y)
 	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		return true;
-	}
-	else if(controls.right || controls.right2)
-	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		return true;
-	}
-	else if(controls.up || controls.up2)
-	{
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
-		return true;
+		playerOne.img = sprites[3];
+		shopkeep.img = sprites[5]
+
 	}
 }
 
-
-//======================================================================================================
-
+function enable (object, sprite, x, y)
+{
+	object.img = sprites[sprite];
+	object.x = x;
+	object.y = y;
+}
 function render()
 {
 		surface.clearRect(0,0,canvas.width,canvas.height);
@@ -306,13 +250,22 @@ function render()
 		{
 			for (var c = 0; c < map.cols; c++)
 			{
-				surface.drawImage(sprites[map.tiles[r][c]], c * SIZE , r * SIZE, SIZE, SIZE );
+				
+				if(map.tiles[r][c] == 1){
+					surface.drawImage(sprites[0], c * SIZE , r * SIZE, SIZE, SIZE );
+				}
+				if(map.tiles[r][c] == 2){
+					surface.drawImage(sprites[2], c * SIZE , r * SIZE, SIZE, SIZE );
+				}
+				if(map.tiles[r][c] == 3){
+					surface.drawImage(sprites[3], c * SIZE , r * SIZE, SIZE, SIZE );
+				}
 			}
 		}	
+		surface.drawImage(door1.img, 0, 0, SIZE, SIZE, 1150, 128, SIZE, SIZE);
 		surface.drawImage(playerOne.img, SIZE*playerSprite, 0, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
-		surface.drawImage(playerTwo.img, SIZE*playerTwoSprite, 0, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
-		surface.drawImage(coin.img, SIZE*coinSprite, 0, SIZE, SIZE, coin.x, coin.y, SIZE, SIZE); //draw coin
+		surface.drawImage(shop.img, 0, 0, 128*3, 128*3, shop.x, shop.y, 128*3, 128*3);
+		surface.drawImage(shopkeep.img, 0, 0, 187, 300, canvas.width/2 - 187/2,canvas.height/7, 187, 300);
+			
+		
 }
-
-window.addEventListener("keydown", controls.keyListner)
-window.addEventListener("keyup", controls.keyListner);
