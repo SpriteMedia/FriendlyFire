@@ -18,6 +18,8 @@ var minSprite = 0;
 var maxSprite = 11;
 var spriteCount = 0;
 var fps = 2;
+var textcount = 0;//used for going to next text
+var talking = false;
 
 var shop = {img:null , x: 500, y: 168};
 var shopkeep = {img:null, x:canvas.width/2, y:canvas.height/2};
@@ -92,6 +94,7 @@ function update()
 	interactCollision();
 	draw();
 	render();
+	textBox();
 }
 
 function onKeyDown(event)
@@ -122,7 +125,7 @@ function onKeyDown(event)
 	{
 		case 32:
 		console.log("keypress");
-		enable(playerOne, 1, 100,100);// this changes the spawn of his location and changes his sprite back to normal (object, sprite#, x, y)
+		textcount++;
 			break;
 	}
 	}
@@ -161,8 +164,51 @@ function playerController()
 	if (down == true)
 		playerOne.y += playerOne.speed;
 }
+//██████████████████████████████Text Box██████████████████████████████
+//fix up text box. its hard coded on only one text box because of the variable
+//textcount is being checked if it's completed then reseting to -1 by a text.length +3
+//figure out how to create text in the canvas
+//enable(playerOne, 1, 100,100);// this changes the spawn of his location and changes his sprite back to normal (object, sprite#, x, y)
+function textBox()
+{
+	if(talking)
+	{
+		var text = ["Hello fellow hunters.", "I'm about to send you on a dangerous mission." ,
+				"I don't know what mission because i didn't think this through","comeback again when i have figured it out",
+				"Goodbye"];
+		if(textcount < text.length)
+		{
+			for(var next = 0; next < text.length; next++)
+			{
+	
+				if(textcount == next)
+				{
+					surface.fillStyle = 'grey';
+					surface.fillRect(368,390,550,180);
+					surface.strokeRect(360,382,568,196);
+					surface.font = "20px Georgia";
+					surface.fillStyle = 'white';
+					surface.fillText(text[textcount], 373, 420);
+				
+				}
 
-
+			}
+		}
+		else if(textcount == text.length)
+		{
+			console.log(textcount);
+			enable(playerOne, 1, 100,100);// this changes the spawn of his location and changes his sprite back to normal (object, sprite#, x, y)
+			textcount -= text.length;
+			shopkeep.img = sprites[3]
+			shop.img = sprites[4];
+			talking = false;
+			console.log(textcount);
+			
+			
+		}
+	}
+}
+//████████████████████████████████████████████████████████████████████████
 function animatePlayer() 
 {
 	playerSprite++; 
@@ -226,13 +272,14 @@ function doorInteract()
 	
 }
 
-function interactCollision()
+function interactCollision()//this is where it checks for shop collision and makes sprites appear and disappear
 {
 	if(playerOne.x < shop.x + 384 && playerOne.x > shop.x && playerOne.y < shop.y + 384 &&  playerOne.y > shop.y)
 	{
 		playerOne.img = sprites[3];
 		shopkeep.img = sprites[5]
-
+		shop.img = sprites[3];
+		talking = true;
 	}
 }
 
