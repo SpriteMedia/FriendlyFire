@@ -434,25 +434,25 @@ function draw() {
 
 function playerController(player, inleft, inright, inup) 
 {
-	if (player.x > 0 && inleft == true && rayCastCheck(player, 10, 5))
-		player.x -= player.speed;
-	if (inright == true && player.x < map.cols * SIZE && rayCastCheck(player, 10, 5))
-		player.x += player.speed;
-	if (player.y > 0 && inup == true && rayCastCheck(player, 10, 5)) //jump
-	{
-		if(!player.isJumping)
-		{
-			player.isJumping = true;
-			player.velocityY = -20;
-			controls.up = false;
-			controls.up2 = false;
-		}
-	}
-	//console.log(player.velocityY);
-	var gravityPower = 3;
-	jump(player, gravityPower);
-	gravity(player, 10);
-	groundCheck(player, 6, gravityPower);//	this.player
+    if (player.x > 0 && inleft == true && rayCastCheck(player, 10, 5, inleft, inright, inup))
+        player.x -= player.speed;
+    if (inright == true && player.x < map.cols * SIZE && rayCastCheck(player, 10, 5, inleft, inright, inup))
+        player.x += player.speed;
+    if (player.y > 0 && inup == true && rayCastCheck(player, 10, 5, inleft, inright, inup)) //jump
+    {
+        if(!player.isJumping)
+        {
+            player.isJumping = true;
+            player.velocityY = -20;
+            controls.up = false;
+            controls.up2 = false;
+        }
+    }
+    //console.log(player.velocityY);
+    var gravityPower = 3;
+    jump(player, gravityPower);
+    gravity(player, 10);
+    groundCheck(player, 6, gravityPower);//    this.player
 }
 
 function jump(player, gravityPower)
@@ -502,35 +502,35 @@ function groundCheck(player, gap, rayLength)//n is number of raycasts
 	}	
 }
 
-function rayCastCheck(player, Gap, rayLength)
+function rayCastCheck(player, Gap, rayLength, left, right, up)
 {
-	var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
-	var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
-	var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
-	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
-	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
+    var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
+    var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
+    var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
+    var upRay = centerPos.y - (player.sizeY/2 + rayLength);
+    var downRay = centerPos.y + (player.sizeY/2 + rayLength);
 
-	if(controls.left || controls.left2)
-	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		return true;
-	}
-	else if(controls.right || controls.right2)
-	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		return true;
-	}
-	else if(controls.up || controls.up2)
-	{
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
-		return true;
-	}
+    if(left) //this part
+    {
+        if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+        if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+        if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+        return true;
+    }
+    if(right)
+    {
+        if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+        if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+        if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+        return true;
+    }
+    if(up)
+    {
+        if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
+        if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
+        if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
+        return true;
+    }
 }
 
 

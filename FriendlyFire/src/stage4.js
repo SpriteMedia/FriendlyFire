@@ -5,9 +5,10 @@ var surface = canvas.getContext("2d");
 
 //--------------------------------------------PLAYER DATA ------------------------------------------------------------------------
 // x = start position, y = start position, speed = players speed (becareful when changing)
-var playerOne = {img:null, x:0, y: 512, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false};  
-var playerTwo = {img:null, x:0, y: 512, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false}; 
-var backGround = {img:null};
+var playerOne = {img:null, x:50, y: 512, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false};  
+var playerTwo = {img:null, x:50, y: 512, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false};
+var raser = {img: null, x:-50, y:0, speed: 1.5, velocity:1, isMoving: true};
+var background = {img:null};
 var controls;                     //Object for buttons
 var playerSprite = 0;			  // FOR ANIMATION (IGNORE)
 var maxSprite = 11;				  // FOR ANIMATION (IGNORE)
@@ -17,50 +18,59 @@ var minSprite2 = 0;               // FOR ANIMATION (IGNORE)
 var maxSprite2 = 11;              // FOR ANIMATION (IGNORE)
 var spriteCount = 0;              // FOR ANIMATION (IGNORE)
 var fps = 2;                      // FOR ANIMATION (IGNORE)
-
-
 //---------------------------------------------GAME DATA ------------------------------------------------------------------------
 
 //to add asset, place name here of image saved under img folder and call it in map array by its placement here. ex: "dirt" = 2
-var images = ["empty","playerTwo", "Tile1", "Tile2" ,"Tile2", "door", "dooropen","monster", "purplecoin", "playerOne", "Saw", "Background2"]; 
+var images = ["empty","playerTwo", "Tile", "Tile2" ,"Tile3", "empty", "dooropen","monster", "purplecoin", "playerOne", "Background", "Raser","pause", "saw", "LaserDoor", "Button"]; 
 var sprites = []; 
 var SIZE = 64; 
 var map = {
-	rows: 21,	
+	rows: 10,	
 	cols: 40, 
 	tiles:
 	[
-		[4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4,4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4],
-		[0,4,0,0,0,4,0,0,0,0,0,4,0,0,0,4,0,0,4,0,0,4,0,0,0,4,0,0,0,0,0,4,0,0,0,4,0,0,4,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //This array is used to draw the map. Just read through the image[] and place 
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0],            //that asset where you want it in the map by using its place number.
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0],            //ex. 2,2,2,2,2,2,2,2 to draw the ground
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[3,3,3,2,2,2,3,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
-		[0,0,0,5,0,3,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,5,0,3,0,0,2,0,0,0,0,0,2,2,2,0,0,0],
-		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+		[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],
+		[7,3,7,7,7,3,7,7,7,7,7,3,7,7,7,3,7,7,3,7,7,3,7,7,7,3,7,7,7,7,7,3,7,7,7,3,7,7,3,7],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0],            //This array is used to draw the map. Just read through the image[] and place 
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0],            //that asset where you want it in the map by using its place number.
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,0,5,0,0,0,0],            //ex. 2,2,2,2,2,2,2,2 to draw the ground
+		[0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,3,3,3,0,0,0,2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,2,0,2,0,0,0,0],
+		[0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0],
+		[2,2,2,2,2,2,2,7,7,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
 	],
 	
 };
 
-
-var coin = {img:null, x: 960, y: 360}; 
+var pause = {img:null, x:700, y:512};
+var Door = {img:null, x:2240, y:320, sizeX:13, sizeY:64, isClosed: false};
+var coin = {img:null, x: 2445, y: 512};
+var saw1 = {img:null, size:64, fromX:620, fromY: 330, toX: 400, toY: 330, curX:620, curY: 300, speed: 10};
+var saw2 = {img:null, size:64, fromX:2020, fromY: 500, toX: 770, toY: 1070, curX:770, curY: 385, speed: 13};
+var saw3 = {img:null, size:64, fromX:2020, fromY: 500, toX: 770, toY: 1070, curX:770, curY: 512, speed: 9};
+var button = {img:null, size:64, x: 2112, y:512};
 var coinSprite = 0;
 var coinMax = 16;
 
 setInt = setInterval(update, 33.34);
+
+//==================Raser ===================
+function Raser()
+{
+	if(raser.isMoving != false)
+			raser.x += raser.speed;
+	surface.drawImage(raser.img, raser.x, raser.y, 10, 700);
+}
+
+function Pause()
+{
+	if ((pause.x + 60 == playerOne.x && pause.y == playerOne.y) || (pause.x + 60 == playerTwo.x && pause.y == playerTwo.y))
+	{
+			raser.isMoving = false;
+			setTimeout(function(){ raser.isMoving = true; }, 3000);
+	}
+}
 
 //=======================================INITIALIZE SPIRTES ============================================
 for (var i = 0; i < images.length; i++)                                                                //takes images from image[] and turns them to assets in sprite[]
@@ -72,20 +82,32 @@ for (var i = 0; i < images.length; i++)                                         
 playerOne.img = sprites[9];                                                                            //spritesheet for playerOne
 playerTwo.img = sprites[1];																			   //spritesheet for playerTwo
 coin.img = sprites[8];																				   //spritesheet for coin
-backGround.img = sprites[11];
+background.img = sprites[10];
+raser.img = sprites[11];
+pause.img = sprites[12];
+saw1.img = sprites[13];
+saw2.img = sprites[13];
+saw3.img = sprites[13];
+Door.img = sprites[14];
+button.img = sprites[15];
+
 //===========================================UPDATE=====================================================
-
-
 
 function update()
 {
+	Pause();
 	animatePlayer(); 
-	animatePlayer2(); 
-	animateCoin();
+	animatePlayer2();
 	playerController(playerOne, controls.left, controls.right , controls.up);
 	playerController(playerTwo, controls.left2, controls.right2, controls.up2);
 	draw();
+	collision();
 	render();
+	Raser();
+	animateCoin ();
+	moveSawX(saw1);
+	moveSawX(saw2);
+	moveSawX(saw3);
 }
 
 
@@ -178,6 +200,13 @@ function animateCoin ()
 
 
 
+function moveSawX(saw)
+{
+	saw.curX += saw.speed;
+	if(saw.fromX < saw.curX ||saw.toX > saw.curX)
+		saw.speed *= -1;
+}
+
 function clamp(value, min, max){
     if(value < min) return min;
     else if(value > max) return max;
@@ -189,15 +218,31 @@ function draw() {
     surface.clearRect(0, 0, canvas.width, canvas.height);//clear the viewport AFTER the matrix is reset
 
     //Clamp the camera position to the world bounds while centering the camera around the player                                             
-    var camX = clamp(-playerOne.x + canvas.width/2, -map.cols * SIZE, 0);
-    var camY = clamp(-playerOne.y + canvas.height/1.25, -map.row * SIZE, 0);
-
-    surface.translate( camX, camY );    
-
-    //Draw everything
+    var camX = clamp(-playerOne.x + canvas.width/2, -2000, 0);
+    
+    surface.translate( camX, 0 );
 }
 
-
+function collision()
+{
+	if(raser.x == playerOne.x || raser.x == playerTwo.x)
+	{
+		alert("GG! Press F5 to Restart Game");
+	}
+	
+	if (2110 == playerOne.x || 2110 == playerTwo.x )
+	{
+		setTimeout(function(){ Door.isClosed = true; }, 3000);
+		map.tiles[5][35] = 0;
+		Door.y -= 1;
+	}
+	
+	if (2445 == playerOne.x || 2445 == playerTwo.x)
+	{
+		alert("GG! You Win! Press F5 to Restart Game");
+	}
+	
+}
 //============================================CONTROLLER=================================================
 
 function playerController(player, inleft, inright, inup) 
@@ -211,9 +256,9 @@ function playerController(player, inleft, inright, inup)
 		if(!player.isJumping)
 		{
 			player.isJumping = true;
+			player.velocityY = -30;
 			controls.up = false;
 			controls.up2 = false;
-			player.velocityY = -20;
 		}
 	}
 	var gravityPower = 3;
@@ -227,7 +272,7 @@ function jump(player, gravityPower)
 	if(player.isJumping)
 	{
 		player.y += player.velocityY;
-		player.y_velocity *= 0.9;
+		player.y_velocity *= 0.7;
 		player.velocityY += gravityPower;
 	}
 }
@@ -303,8 +348,12 @@ function rayCastCheck(player, Gap, rayLength)
 
 function render()
 {
+	var cam = clamp(-playerOne.x + canvas.width/2, -2000, 0);
 		surface.clearRect(0,0,canvas.width,canvas.height);
-		surface.drawImage(backGround.img, -100, 0,1700, 700);
+		surface.drawImage(background.img, -cam - 50,0,1400,700);
+		surface.drawImage(pause.img, pause.x, pause.y, SIZE,SIZE);
+		surface.drawImage(button.img, button.x, button.y, button.size, button.size);
+		surface.drawImage(Door.img, Door.x, Door.y, Door.sizeX, Door.sizeY);
 		for (var r = 0; r < map.rows; r++)
 		{
 			for (var c = 0; c < map.cols; c++)
@@ -314,8 +363,11 @@ function render()
 		}	
 		surface.drawImage(playerOne.img, SIZE*playerSprite, 0, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
 		surface.drawImage(playerTwo.img, SIZE*playerTwoSprite, 0, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
+		surface.drawImage(saw1.img, saw1.curX, saw1.curY, saw1.size, saw1.size);
+		surface.drawImage(saw2.img, saw2.curX, saw2.curY, saw2.size, saw2.size);
+		surface.drawImage(saw3.img, saw3.curX, saw3.curY, saw3.size, saw3.size);
 		surface.drawImage(coin.img, SIZE*coinSprite, 0, SIZE, SIZE, coin.x, coin.y, SIZE, SIZE); //draw coin
 }
 
-window.addEventListener("keydown", controls.keyListner)
+window.addEventListener("keydown", controls.keyListner);
 window.addEventListener("keyup", controls.keyListner);
