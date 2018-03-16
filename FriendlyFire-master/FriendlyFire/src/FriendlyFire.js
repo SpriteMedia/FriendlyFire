@@ -18,6 +18,10 @@ var maxSprite2 = 11;              // FOR ANIMATION (IGNORE)
 var spriteCount = 0;              // FOR ANIMATION (IGNORE)
 var fps = 2;                      // FOR ANIMATION (IGNORE)
 
+var line = document.createElement("audio");
+line.type =  "audio/mp3";
+line.src = "../music/subway.mp3";
+line.autoplay = true;
 
 //---------------------------------------------GAME DATA ------------------------------------------------------------------------
 
