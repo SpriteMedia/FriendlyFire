@@ -37,7 +37,7 @@ var map = {
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2],            
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2],
 		[0,0,0,0,0,0,2,0,0,0,2,0,0,2,0,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2],
-		[0,0,0,0,2,0,2,0,0,0,2,0,0,2,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,6],
+		[0,0,0,0,2,0,2,0,0,0,2,0,0,2,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0],
 		[2,2,2,2,2,0,2,0,0,0,2,0,0,2,2,2,2,2,2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,2,2,2,2],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7],
@@ -49,7 +49,7 @@ var map = {
 
 var saw = {img: null, x: 253, y: 320};
 var saw2 = {img: null, x: 1024, y: 510};
-var coin = {img: null, x: 960, y: 360}; 
+var coin = {img: null, x: 2490, y: 510}; 
 
 var coinSprite = 0;
 var coinMax = 16;
@@ -83,7 +83,10 @@ function update()
 	playerController(playerTwo, controls.left2, controls.right2, controls.up2);
 	draw();
 	render();
-	checkCollision();
+	checkCollision(playerOne);
+    checkCollision(playerTwo);
+	CoinCheck(playerOne, coin);
+    CoinCheck(playerTwo, coin);
 	//flash();
 }
 
@@ -298,31 +301,36 @@ function rayCastCheck(player, Gap, rayLength)
 }
 function checkCollision()
 {
-	
-		if (!(playerOne.x +12 > saw.x+52 ||	
-			  playerOne.x+52 < saw.x +12||	
-			  playerOne.y +32> saw.y+52 ||	
-			  playerOne.y+48 < saw.y +40||
-			  playerOne.x+70 > saw2.x ||	
-			  playerOne.x < saw2.x +70||	
-			  playerOne.y < saw2.y+70 ||	
-			  playerOne.y+70 > saw2.y||
-			  playerTwo.x +70 > saw.x ||	
-			  playerTwo.x < saw.x +70||	
-			  playerTwo.y < saw.y+70 ||	
-			  playerTwo.y+70 > saw.y ||
-			  playerTwo.x+70 > saw2.x ||	
-			  playerTwo.x < saw2.x +70||	
-			  playerTwo.y < saw2.y+70 ||	
-			  playerTwo.y+70 > saw2.y))	
-		{
-			window.alert("You die!");
-			clearInterval(setInt);
-			
-		}
-	
+	var gap = 7;
+	if(playerOne.x + playerOne.sizeX > saw.X + gap && playerOne.x < saw.X + saw.size - gap &&
+        playerOne.y + playerOne.sizeY > saw.Y + gap && playerOne.y < saw.Y + saw.size - gap)
+    {
+        playerOne.isDead = true;
+    }
+    if(playerTwo.x + playerTwo.sizeX > saw.X + gap && playerTwo.x < saw.X + saw.size - gap &&
+        playerTwo.y + playerTwo.sizeY > saw.Y + gap && playerTwo.y < saw.Y + saw.size - gap )
+    {
+        playerTwo.isDead = true;
+    }	
+	if(playerOne.x + playerOne.sizeX > saw2.X + gap && playerOne.x < saw2.X + saw.size - gap &&
+        playerOne.y + playerOne.sizeY > saw2.Y + gap && playerOne.y < saw2.Y + saw.size - gap)
+    {
+        playerOne.isDead = true;
+    }
+    if(playerTwo.x + playerTwo.sizeX > saw2.X + gap && playerTwo.x < saw2.X + saw.size - gap &&
+        playerTwo.y + playerTwo.sizeY > saw2.Y + gap && playerTwo.y < saw2.Y + saw.size - gap )
+    {
+        playerTwo.isDead = true;
+    }
 }
-
+function CoinCheck (player, coin)
+{
+    if (player.x < coin.x + 70 && player.x + 64 > coin.x 
+        && player.y > coin.y && player.y + 64 < coin.y + 100)
+    {
+        console.log("You won");
+    }
+}
 //======================================================================================================
 
 function render()
