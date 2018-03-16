@@ -5,25 +5,16 @@ var surface = canvas.getContext("2d");
 
 //--------------------------------------------PLAYER DATA ------------------------------------------------------------------------
 // x = start position, y = start position, speed = players speed (becareful when changing)
-var playerOne = {img:null, x:0, y: 512, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false};  
-var playerTwo = {img:null, x:0, y: 512, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false};  
-var controls;                     //Object for buttons
-var playerSprite = 0;			  // FOR ANIMATION (IGNORE)
-var maxSprite = 11;				  // FOR ANIMATION (IGNORE)
-var minSprite = 0;			      // FOR ANIMATION (IGNORE)
-var playerTwoSprite = 0;          // FOR ANIMATION (IGNORE)
-var minSprite2 = 0;               // FOR ANIMATION (IGNORE)
-var maxSprite2 = 11;              // FOR ANIMATION (IGNORE)
-var spriteCount = 0;              // FOR ANIMATION (IGNORE)
-var fps = 2;                      // FOR ANIMATION (IGNORE)
+  
+
 
 
 //---------------------------------------------GAME DATA ------------------------------------------------------------------------
 
-//to add asset, place name here of image saved under img folder and call it in map array by its placement here. ex: "dirt" = 2
-var images = ["empty","playerTwo", "dirt", "grass" ,"grasstop", "door", "dooropen","monster", "purplecoin", "playerOne", "Saw"]; 
-var sprites = [];  
-var map = {
+//to add asset, place name here of image saved under img folder and call it in map2 array by its placement here. ex: "dirt" = 2
+var images2 = ["empty","playerTwo", "dirt", "grass" ,"grasstop", "door", "dooropen","monster", "purplecoin", "playerOne", "Saw"]; 
+var sprites2 = [];  
+var map2 = {
 	rows: 21,	
 	cols: 40, 
 	tiles:
@@ -31,8 +22,8 @@ var map = {
 		[4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4,4,2,4,4,4,2,4,4,4,4,4,2,4,4,4,2,4,4,2,4],
 		[0,4,0,0,0,4,0,0,0,0,0,4,0,0,0,4,0,0,4,0,0,4,0,0,0,4,0,0,0,0,0,4,0,0,0,4,0,0,4,0],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //This array is used to draw the map. Just read through the image[] and place 
-		[0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0],            //that asset where you want it in the map by using its place number.
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //This array is used to draw the map2. Just read through the image[] and place 
+		[0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,7,0,0,0,0,0,0,0,0],            //that asset where you want it in the map2 by using its place number.
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0],            //ex. 2,2,2,2,2,2,2,2 to draw the ground
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,6,0,0,0,0],
 		[0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,0,0,0],
@@ -61,15 +52,15 @@ var coinMax = 16;
 setInt = setInterval(update, 33.34);
 
 //=======================================INITIALIZE SPIRTES ============================================
-for (var i = 0; i < images.length; i++)                                                                //takes images from image[] and turns them to assets in sprite[]
+for (var i = 0; i < images2.length; i++)                                                                //takes images from image[] and turns them to assets in sprite[]
 {
-	sprites[i] = new Image();
-	sprites[i].src = '../img/'+images[i]+'.png';
+	sprites2[i] = new Image();
+	sprites2[i].src = '../img/'+images2[i]+'.png';
 }
-																									   //animated sprite stay outside of map array
-playerOne.img = sprites[9];                                                                            //spritesheet for playerOne
-playerTwo.img = sprites[1];																			   //spritesheet for playerTwo
-coin.img = sprites[8];																				   //spritesheet for coin
+																									   //animated sprite stay outside of map2 array
+playerOne.img = sprites2[9];                                                                            //sprites2heet for playerOne
+playerTwo.img = sprites2[1];																			   //sprites2heet for playerTwo
+coin.img = sprites2[8];																				   //sprites2heet for coin
 //===========================================UPDATE=====================================================
 
 
@@ -179,13 +170,13 @@ function clamp(value, min, max){
     return value;
 }
 
-function draw() {
+function draw2() {
     surface.setTransform(1,0,0,1,1,0);//reset the transform matrix as it is cumulative
     surface.clearRect(0, 0, canvas.width, canvas.height);//clear the viewport AFTER the matrix is reset
 
     //Clamp the camera position to the world bounds while centering the camera around the player                                             
     var camX = clamp(-playerOne.x + canvas.width/2, -2000, 0);
-    var camY = clamp(-playerOne.y + canvas.height/1.25, -map.row, 0);
+    var camY = clamp(-playerOne.y + canvas.height/1.25, -map2.row, 0);
 
     surface.translate( camX, camY );    
 
@@ -199,7 +190,7 @@ function playerController(player, inleft, inright, inup, inescape)
 {
 	if (player.x > 0 && inleft == true && rayCastCheck(player, 10, player.speed/2))
 		player.x -= player.speed;
-	if (inright == true && player.x < map.cols * SIZE && rayCastCheck(player, 10, player.speed/2))
+	if (inright == true && player.x < map2.cols * SIZE && rayCastCheck(player, 10, player.speed/2))
 		player.x += player.speed;
 	if (player.y > 0 && inup == true && rayCastCheck(player, 10, player.speed/2)) //jump
 	{
@@ -214,10 +205,11 @@ function playerController(player, inleft, inright, inup, inescape)
 	{
 	backToMainMenu();
 	}
-	console.log(player.velocityY);
+	
 	var gravityPower = 3;
 	jump(player, gravityPower);
 	gravity(player, 10);
+	coinCol(player);
 	groundCheck(player, 3, gravityPower);//	this.player
 }
 
@@ -257,12 +249,12 @@ function gravity(player, gravityPower)
 function groundCheck(player, gap, rayLength)//n is number of raycasts
 {
 	var bottomY = parseInt((player.y + player.sizeY + rayLength)/SIZE);
-	if(bottomY > map.rows) return false;
+	if(bottomY > map2.rows) return false;
 	
 	player.isGround = false;
-	if(map.tiles[bottomY][parseInt((player.x + gap)/SIZE)] != 0) player.isGround = true; 
-	if(map.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
-	if(map.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
+	if(map2.tiles[bottomY][parseInt((player.x + gap)/SIZE)] != 0) player.isGround = true; 
+	if(map2.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
+	if(map2.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
 	
 	if(player.isGround)
 	{
@@ -282,43 +274,56 @@ function rayCastCheck(player, Gap, rayLength)
 
 	if(controls.left || controls.left2)
 	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map2.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map2.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map2.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
 		return true;
 	}
 	else if(controls.right || controls.right2)
 	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map2.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map2.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map2.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
 		return true;
 	}
 	else if(controls.up || controls.up2)
 	{
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
+		if( map2.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
+		if( map2.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
+		if( map2.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
 		return true;
 	}
 }
 
+function coinCol(player)
+{
+    if(player.x + 64 > coin.x && player.x < coin.x+64 && player.y + 64 > coin.y && player.y < coin.y+64 )
+	{
+		if(completed == 0)
+		{
+			completed++;
+		}
+		backToMainMenu();
+		
+	}
+	
+}
 
 //======================================================================================================
 
-function render()
+function render2()
 {
 		surface.clearRect(0,0,canvas.width,canvas.height);
 		
-		for (var r = 0; r < map.rows; r++)
+		for (var r = 0; r < map2.rows; r++)
 		{
-			for (var c = 0; c < map.cols; c++)
+			for (var c = 0; c < map2.cols; c++)
 			{
-				surface.drawImage(sprites[map.tiles[r][c]], c * SIZE , r * SIZE, SIZE, SIZE );
+				surface.drawImage(sprites2[map2.tiles[r][c]], c * SIZE , r * SIZE, SIZE, SIZE );
 			}
 		}	
-		surface.drawImage(playerOne.img, SIZE*playerSprite, 0, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
-		surface.drawImage(playerTwo.img, SIZE*playerTwoSprite, 0, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
+		surface.drawImage(playerOne.img, SIZE * playerOne.sprite, SIZE * playerOne.dir, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
+		surface.drawImage(playerTwo.img, SIZE * playerTwo.sprite, SIZE * playerTwo.dir, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
 		surface.drawImage(coin.img, SIZE*coinSprite, 0, SIZE, SIZE, coin.x, coin.y, SIZE, SIZE); //draw coin
 }
 
