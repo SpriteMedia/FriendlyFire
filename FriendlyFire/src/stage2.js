@@ -591,6 +591,7 @@ function CoinCheck (player, coin)
 		if(completed == 2)
 		{
 			completed++;
+			backToMainMenu();
 		}
 		
 	}
