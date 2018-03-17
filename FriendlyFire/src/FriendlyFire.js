@@ -220,8 +220,8 @@ function level()
 	else if(stage == 3)
 	{
 
-	animator(playerOne, controlOne.left, controlOne.right); 
-	animator(playerTwo, controlTwo.left2, controlTwo.right2); 
+	animator(playerOne, controls.left, controls.right); 
+	animator(playerTwo, controls.left2, controls.right2); 
 	animateCoin();
 	gameManager();
 	playerController3(playerOne, controlOne);
@@ -234,9 +234,9 @@ function level()
 	else if(stage == 4)
 	{
 
-animatePlayer(); 
-	animatePlayer2();
-	playerController(playerOne, controls.left, controls.right , controls.up);
+	animator(playerOne, controls.left, controls.right); 
+	animator(playerTwo, controls.left2, controls.right2);  
+	playerController(playerOne, controls.left, controls.right , controls.up, controls.escape);
 	playerController(playerTwo, controls.left2, controls.right2, controls.up2);
 	//draw();
 	collision();
@@ -424,7 +424,8 @@ function textBox()
 		var text= [["Hello fellow hunters.", "I'm about to send you on a dangerous mission." ,
 				"I don't know what mission because i didn't think this through","comeback again when i have figured it out",
 				"Goodbye"],["Hey, you completed your first mission!", "Well done! Although that was just an easy task i gave you.",
-				"this one might be a little tougher"], ["Here in my dialog", "but what's more important is the", "story"]];
+				"this one might be a little tougher"], ["Here in my dialog", "but what's more important is the", "story"], ["Oh good, you're back! I got some more things for you to do.",
+				"Is it getting easier for you or harder?", "well it doesn't matter does it because you can do anything right?", "here's another one for you"],["Insert wining speech here", "Play animation"]];
 				
 				
 				unlock();
@@ -553,35 +554,38 @@ function doorInteract()
 	var imported = document.createElement("script")//<script>
 	if(playerOne.x < door1.x + 64 && playerOne.x > door1.x && playerOne.y < door1.y + 64 && playerOne.y > door1.y)
 	{
-		
-		imported.src = "stage1.js";//this runs the second script
-		document.body.appendChild(imported);
-		entered = 1;
-		stage = 1;
-	}
-		if(playerOne.x < door2.x + 64 && playerOne.x > door2.x && playerOne.y < door2.y + 64 && playerOne.y > door2.y && completed > 0 && door2.img == sprites[7])
-	{
-		imported.src = "stage3.js";//this runs the second script
-		document.body.appendChild(imported);
-		entered = 1;
-		stage = 3;
-		
-		
-	}
-	if(playerOne.x < door3.x + 64 && playerOne.x > door3.x && playerOne.y < door3.y + 64 && playerOne.y > door3.y && completed > 1 && door3.img == sprites[7])
-	{
 		imported.src = "stage2.js";//this runs the second script
 		document.body.appendChild(imported);
 		entered = 1;
 		stage = 2;
 		
 	}
-	if(playerOne.x < door4.x + 64 && playerOne.x > door4.x && playerOne.y < door4.y + 64 && playerOne.y > door4.y && completed > 2 && door4.img == sprites[7])
+		if(playerOne.x < door2.x + 64 && playerOne.x > door2.x && playerOne.y < door2.y + 64 && playerOne.y > door2.y && completed > 0 && door2.img == sprites[7])
 	{
+		
+		
+		imported.src = "stage1.js";//this runs the second script
+		document.body.appendChild(imported);
+		entered = 1;
+		stage = 1;
+		
+	}
+	if(playerOne.x < door3.x + 64 && playerOne.x > door3.x && playerOne.y < door3.y + 64 && playerOne.y > door3.y && completed > 1 && door3.img == sprites[7])
+	{
+
+		
+		
 		imported.src = "stage4.js";//this runs the second script
 		document.body.appendChild(imported);
 		entered = 1;
 		stage = 4;
+	}
+	if(playerOne.x < door4.x + 64 && playerOne.x > door4.x && playerOne.y < door4.y + 64 && playerOne.y > door4.y && completed > 2 && door4.img == sprites[7])
+	{
+		imported.src = "stage3.js";//this runs the second script
+		document.body.appendChild(imported);
+		entered = 1;
+		stage = 3;
 		
 	}
 }

@@ -44,6 +44,9 @@ var blueShotHImg = new Image();
 var blueShotVImg = new Image(); 
 var redShotHImg = new Image();    
 
+var coin = {img:null, x: 960, y: 360}; 
+var coinSprite = 0;
+var coinMax = 16;
 
 //---------------------------------------------GAME DATA ------------------------------------------------------------------------
 
@@ -125,7 +128,11 @@ playerTwo.img = sprites3[1];																			   //sprites3heet for playerTwo
 coin.img = sprites3[5];		
 backGroundImg = sprites3[8];			
 
-
+function update()
+{
+	
+	
+}
 
 for(var i = 0; i < maxShot; i++)
 {
@@ -434,6 +441,14 @@ function animator(player, leftInput, rightInput, upInput)
         player.sprite = 1;
     }
 }
+
+function animateCoin ()
+{
+	coinSprite++;
+	if(coinSprite == coinMax)
+		coinSprite = 0;
+}
+
 //==============================================CAMERA==================================================
 
 
@@ -479,7 +494,7 @@ function playerController(player, inleft, inright, inup, inescape)
 	{
 	backToMainMenu();
 	}
-	
+	Death();
 	//console.log(player.velocityY);
 	var gravityPower = 3;
 	jump(player, gravityPower);
@@ -588,7 +603,7 @@ function CoinCheck (player, coin)
 		&& player.y > coin.y && player.y + 64 < coin.y + 100)
 	{
 		console.log("You won");
-		if(completed == 2)
+		if(completed == 0)
 		{
 			completed++;
 			backToMainMenu();
@@ -691,6 +706,7 @@ function Death()
 			playerOne.y = 300;
 			playerTwo.x = 0;
 			playerTwo.y = 512;
+			backToMainMenu();
 		}
 	}
 }

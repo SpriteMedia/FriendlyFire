@@ -5,25 +5,49 @@ var surface = canvas.getContext("2d");
 
 //--------------------------------------------PLAYER DATA ------------------------------------------------------------------------
 // x = start position, y = start position, speed = players speed (becareful when changing)
-var playerOne = {img:null, x:200, y: 384, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false, isDead: false};  
-var playerTwo = {img:null, x:256, y: 576, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false, isDead: false};
+//var playerOne = {img:null, x:200, y: 384, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false, isDead: false};  
+//var playerTwo = {img:null, x:256, y: 576, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false, isDead: false};
 var background = {img:null};
 var controls;                     //Object for buttons
-var playerSprite = 0;			  // FOR ANIMATION (IGNORE)
-var maxSprite = 11;				  // FOR ANIMATION (IGNORE)
-var minSprite = 0;			      // FOR ANIMATION (IGNORE)
-var playerTwoSprite = 0;          // FOR ANIMATION (IGNORE)
-var minSprite2 = 0;               // FOR ANIMATION (IGNORE)
-var maxSprite2 = 11;              // FOR ANIMATION (IGNORE)
-var spriteCount = 0;              // FOR ANIMATION (IGNORE)
-var fps = 2;                      // FOR ANIMATION (IGNORE)
+function PLAYER4()
+{
+    this.img = null;
+    this.x = 0; 
+    this.y = 0; 
+    this.speed = 10; 
+    this.sizeX = 64;
+    this.sizeY = 64; 	
+    this.isGround = false; 
+    this.velocityX = 0;
+    this.velocityY = 0; 
+    this.isJumping = false; 
+    this.collisionLeft = false;
+    this.collisionRight = false; 
+    this.collisionUp = false;
+    this.dir = 0;	
+    this.facing = 0; // 0 = left, 1 = right
+    this.sprite = 0;
+    this.maxSprite = 11;
+    this.minSprite = 0;
+	this.isDead = false;
+	this.isWin = false;
+	
+}
+
+var playerOne = new PLAYER4();
+playerOne.x = 200;
+playerOne.y = 384;
+
+var playerTwo = new PLAYER4();
+playerTwo.x = 256;
+playerTwo.y = 576;
 //---------------------------------------------GAME DATA ------------------------------------------------------------------------
 
-//to add asset, place name here of image saved under img folder and call it in map array by its placement here. ex: "dirt" = 2
-var images = ["empty","playerTwo", "Tile", "Tile2" ,"Tile3", "Tile4", "Tile5","Trampoline", "purplecoin", "playerOne", "Background", "Raser","pause", "saw"]; 
-var sprites = []; 
+//to add asset, place name here of image saved under img folder and call it in map5 array by its placement here. ex: "dirt" = 2
+var images5 = ["empty","playerTwo", "Tile", "Tile2" ,"Tile3", "Tile4", "Tile5","Trampoline", "purplecoin", "playerOne", "bkg2", "Raser","pause", "saw"]; 
+var sprites5 = []; 
 var SIZE = 64; 
-var map = {
+var map5 = {
 	rows: 20,	
 	cols: 40, 
 	tiles:
@@ -31,8 +55,8 @@ var map = {
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //This array is used to draw the map. Just read through the image[] and place 
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //that asset where you want it in the map by using its place number.
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //This array is used to draw the map5. Just read through the image[] and place 
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //that asset where you want it in the map5 by using its place number.
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //ex. 2,2,2,2,2,2,2,2 to draw the ground
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -67,29 +91,7 @@ var raser = {img: null, x:-50, y:0, speed: 1, velocity:1, isMoving: true};
 
 setInt = setInterval(update, 33.34);
 
-function update()
-{
-	animatePlayer(); 
-	animatePlayer2();
-	playerController(playerOne, controls.left, controls.right , controls.up);
-	playerController(playerTwo, controls.left2, controls.right2, controls.up2);
-	//draw();
-	collision();
-	render();
-	Laser();
-	animateCoin ();
-	moveSawX(saw1);
-	moveSawX(saw2);
-	moveSawX(saw3);
-	Shooting();
-	TramplineColCheck();
-	ShotColCheck();
-	if(laserDoor.isClosed == false)
-	{
-		LaserDoorOpen();
-	}
-	Death();
-}
+
 
 //=============LaserDoor==================
 var laserDoor = {x:374, y:576, sizeX:13, sizeY:64, speed:2, isClosed: true};
@@ -340,21 +342,21 @@ function Pause()
 }
 
 //=======================================INITIALIZE SPIRTES ============================================
-for (var i = 0; i < images.length; i++)                                                                //takes images from image[] and turns them to assets in sprite[]
+for (var i = 0; i < images5.length; i++)                                                                //takes images5 from image[] and turns them to assets in sprite[]
 {
-	sprites[i] = new Image();
-	sprites[i].src = '../img/'+images[i]+'.png';
+	sprites5[i] = new Image();
+	sprites5[i].src = '../img/'+images5[i]+'.png';
 }
-																									   //animated sprite stay outside of map array
-playerOne.img = sprites[9];                                                                            //spritesheet for playerOne
-playerTwo.img = sprites[1];																			   //spritesheet for playerTwo
-coin.img = sprites[8];																				   //spritesheet for coin
-background.img = sprites[10];
-raser.img = sprites[11];
-saw1.img = sprites[13];
-saw2.img = sprites[13];
-saw3.img = sprites[13];
-button.img = sprites[15];
+																									   //animated sprite stay outside of map5 array
+playerOne.img = sprites5[9];                                                                            //sprites5heet for playerOne
+playerTwo.img = sprites5[1];																			   //sprites5heet for playerTwo
+coin.img = sprites5[8];																				   //sprites5heet for coin
+background.img = sprites5[10];
+raser.img = sprites5[11];
+saw1.img = sprites5[13];
+saw2.img = sprites5[13];
+saw3.img = sprites5[13];
+button.img = sprites5[15];
 
 //===========================================CONTROL INPUT ================================================
 controls = {
@@ -365,7 +367,7 @@ controls = {
 	left2: false, 
 	right: false, 
 	right2: false,
-
+	escape: false,
 	keyListner:function(event) 
 	{
 		var keystate = (event.type == "keydown")?true:false;
@@ -390,49 +392,72 @@ controls = {
 			case 38: //up
 				controls.up2 = keystate;
 			break;
+			case 27: // escape
+				controls.escape = keystate;
+			break;
 		}
 	}
 }
 
 
 //================================================ANIMATION=============================================
-function animatePlayer() 
+function animator(player, leftInput, rightInput, upInput)
 {
-	playerSprite++;
-	if(playerSprite == maxSprite)
-	{
-		
-		if(controls.right || controls.left)
-		{
-			minSprite = 12;
-			maxSprite = 29;
-		}
-		else 	
-		{
-			minSprite = 0;
-			maxSprite = 11;
-		}
-		playerSprite = minSprite;
-	}
-}
 
-function animatePlayer2() 
-{
-	playerTwoSprite++;
-	if(playerTwoSprite == maxSprite2)
-	{
-		if(controls.right2 || controls.left2)
-		{
-			minSprite2 = 12;
-			maxSprite2 = 29;
-		}
-		else 	
-		{
-			minSprite2 = 0;
-			maxSprite2 = 11;
-		}
-		playerTwoSprite = minSprite2;
-	}
+    console.log("direction" + player.maxSprite);
+    console.log("facing" + player.facing);
+
+    player.sprite++;
+    if(player.sprite >= player.maxSprite)
+    {
+        player.sprite = 0;
+    }
+     if(leftInput)
+    {
+        player.dir = 2;
+        player.facing = 0;
+        player.maxSprite = 18;
+
+    }
+    if (!leftInput && player.facing == 0)
+    {
+        player.dir = 0;
+    }
+    if(rightInput)
+    {
+        player.dir = 3;
+        player.facing = 1;
+        player.maxSprite = 18;
+
+    }
+    if (!rightInput && player.facing == 1)
+    {
+        player.dir = 1;
+    }
+    if (!rightInput && !leftInput && player.maxSprite!= 11)
+    {
+        player.maxSprite = 11;
+    }
+    if (upInput && player.facing == 0)
+    {
+        player.dir = 4;
+        player.sprite = 2; 
+    }
+    if (upInput && player.facing == 1)
+    {
+        player.dir = 4;
+        player.sprite = 0; 
+    }
+    if (!upInput && !player.isGround && player.facing == 0)
+    {
+        player.dir = 4;
+        player.sprite = 3;
+    }
+    if (!upInput && !player.isGround && player.facing == 1)
+    {
+        player.dir = 4;
+        player.sprite = 1;
+    }
 }
 
 function animateCoin ()
@@ -510,8 +535,12 @@ function collision()
 	playerOne.x > (coin.x + 30) ||
 	(playerOne.x + playerOne.sizeX) < coin.x + 30))
 	{
+		if(completed == 2)
+		{
+		completed++;
+		}
 		console.log("You Win");
-		clearInterval(setInt, 1000);
+		backToMainMenu();
 	}
 	
 	if(!(playerTwo.y > (coin.y) ||
@@ -519,8 +548,12 @@ function collision()
 	playerTwo.x > (coin.x + 30) ||
 	(playerTwo.x + playerTwo.sizeX) < coin.x + 30))
 	{
+		if(completed == 3)
+		{
+		completed++;
+		}
 		console.log("You Win");
-		clearInterval(setInt, 1000);
+		backToMainMenu();
 	}
 	
 	if(playerOne.y + playerOne.sizeY > canvas.height - 20)
@@ -530,11 +563,11 @@ function collision()
 }
 //============================================CONTROLLER=================================================
 
-function playerController(player, inleft, inright, inup) 
+function playerController(player, inleft, inright, inup, inescape) 
 {
 	if (player.x > 0 && inleft == true && rayCastCheck(player, 10, player.speed/2))
 		player.x -= player.speed;
-	if (inright == true && player.x < map.cols * SIZE && rayCastCheck(player, 10, player.speed/2))
+	if (inright == true && player.x < map5.cols * SIZE && rayCastCheck(player, 10, player.speed/2))
 		player.x += player.speed;
 	if (player.y > 0 && inup == true && rayCastCheck(player, 10, player.speed/2)) //jump
 	{
@@ -546,11 +579,22 @@ function playerController(player, inleft, inright, inup)
 			controls.up2 = false;
 		}
 	}
+	if(inescape == true)
+	{
+	backToMainMenu();
+	}
+	
 	var gravityPower = 3;
 	jump(player, gravityPower);
 	gravity(player, 10);
 	groundCheck(player, 3, gravityPower);//	this.player
 }
+
+function backToMainMenu()
+{
+		stage = 0;
+	
+}	
 
 function jump(player, gravityPower)
 {
@@ -582,12 +626,12 @@ function gravity(player, gravityPower)
 function groundCheck(player, gap, rayLength)//n is number of raycasts
 {
 	var bottomY = parseInt((player.y + player.sizeY + rayLength)/SIZE);
-	if(bottomY > map.rows) return false;
+	if(bottomY > map5.rows) return false;
 	
 	player.isGround = false;
-	if(map.tiles[bottomY][parseInt((player.x + gap)/SIZE)] != 0) player.isGround = true; 
-	if(map.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
-	if(map.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
+	if(map5.tiles[bottomY][parseInt((player.x + gap)/SIZE)] != 0) player.isGround = true; 
+	if(map5.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
+	if(map5.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
 	
 	if(player.isGround)
 	{
@@ -607,23 +651,23 @@ function rayCastCheck(player, Gap, rayLength)
 
 	if(controls.left || controls.left2)
 	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map5.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map5.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map5.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
 		return true;
 	}
 	else if(controls.right || controls.right2)
 	{
-		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map5.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map5.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map5.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
 		return true;
 	}
 	else if(controls.up || controls.up2)
 	{
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
-		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
+		if( map5.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
+		if( map5.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
+		if( map5.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
 		return true;
 	}
 }
@@ -633,7 +677,10 @@ function Death()
 	if(playerOne.isDead || playerTwo.isDead) 
 	{
 		console.log("game over");
-		clearInterval(setInt, 1000);
+		if(cheatcode == false)
+		{
+		backToMainMenu();
+		}
 	}
 }
 
@@ -645,15 +692,15 @@ function render()
 		surface.clearRect(0,0,canvas.width,canvas.height);
 		surface.drawImage(laserDoorSp, laserDoor.x, laserDoor.y, laserDoor.sizeX, laserDoor.sizeY);
 		surface.drawImage(doorButtonSp, doorButton.x, doorButton.y, SIZE, SIZE);
-		for (var r = 0; r < map.rows; r++)
+		for (var r = 0; r < map5.rows; r++)
 		{
-			for (var c = 0; c < map.cols; c++)
+			for (var c = 0; c < map5.cols; c++)
 			{
-				surface.drawImage(sprites[map.tiles[r][c]], c * SIZE , r * SIZE, SIZE, SIZE );
+				surface.drawImage(sprites5[map5.tiles[r][c]], c * SIZE , r * SIZE, SIZE, SIZE );
 			}
 		}	
-		surface.drawImage(playerOne.img, SIZE*playerSprite, 0, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
-		surface.drawImage(playerTwo.img, SIZE*playerTwoSprite, 0, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
+		surface.drawImage(playerOne.img, SIZE * playerOne.sprite, SIZE * playerOne.dir, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
+		surface.drawImage(playerTwo.img, SIZE * playerTwo.sprite, SIZE * playerTwo.dir, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
 		surface.drawImage(saw1.img, saw1.curX, saw1.curY, saw1.size, saw1.size);
 		surface.drawImage(saw2.img, saw2.curX, saw2.curY, saw2.size, saw2.size);
 		surface.drawImage(saw3.img, saw3.curX, saw3.curY, saw3.size, saw3.size);

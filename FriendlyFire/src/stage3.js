@@ -598,9 +598,17 @@ function Death()
 					surface.font = "500px Georgia";
 					surface.fillStyle = 'white';
 					surface.fillText(deadtext, 373*2.5, 420*2.5);
-		playerOne.isDead = false;
+					
+					
+						backToMainMenu1();
+			playerOne.img = sprites[1];
+			playerOne.isDead = false;
 		playerTwo.isDead = false;
+		
 		}
+		
+		
+	
 		//game over;
 
 
@@ -808,7 +816,7 @@ function winningStep()
 		playerOne.y = 500;
 		playerTwo.x = 250;
 		playerTwo.y = 200;
-		if(completed < 2)
+		if(completed == 3)
 		{
 		completed++;
 		
