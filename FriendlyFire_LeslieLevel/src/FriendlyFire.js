@@ -7,7 +7,7 @@ var surface = canvas.getContext("2d");
 
 //--------------------------------------------PLAYER DATA ------------------------------------------------------------------------
 // x = start position, y = start position, speed = players speed (becareful when changing)
-var playerOne = {img:null, x:0, y: 512, speed: 10, sizeX: 60, sizeY: 64, isGround: false, velocityY:0, isJumping: false};  
+var playerOne = {img:null, x:64, y: 480, speed: 10, sizeX: 60, sizeY: 64, isGround: false, velocityY:0, isJumping: false};  
 var playerTwo = {img:null, x:0, y: 512, speed: 10, sizeX: 60, sizeY: 64, isGround: false, velocityY:0, isJumping: false};  
 var controls;                     //Object for buttons
 var playerSprite = 0;			  // FOR ANIMATION (IGNORE)
@@ -51,8 +51,8 @@ var map = {
 		[0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,2,2,2,2,2,2,2,2,2,2,2],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,4,0,0,0,2],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,3,3,0,0,0,0,0,0,0,0,0,4,4,4,4,0,0,0,2],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,0,3,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-		[3,3,3,3,3,3,3,3,0,0,3,0,3,2,3,2,3,2,3,3,3,3,3,3,2,3,3,3,3,0,0,3,3,3,3,3,3,3,3,3],
+		[0,3,3,3,3,3,3,3,0,0,0,0,0,3,0,2,0,3,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+		[3,2,2,2,2,2,2,2,0,0,3,0,3,2,3,2,3,2,3,3,3,3,3,3,2,3,3,3,3,0,0,3,3,3,3,3,3,3,3,3],
 		[2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,2,2,2,2,2,2],
 		[2,2,2,2,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,2,2,2,2,2,2],
 		[2,2,2,2,2,2,2,2,2,2,3,3,0,3,3,0,0,0,0,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,2,2,2,2,2,2],
@@ -85,7 +85,7 @@ var spike12 = {x: 1600, y: 1082};
 var spike13 = {x: 1160, y: 1082};
 
 var blueShotHImg = new Image();
-var redShotHImg = new Image();
+var redShotVImg = new Image();
 
 var coin = {img:null, x: 125, y: 925}; 
 var coinSprite = 0;
@@ -122,7 +122,7 @@ var monster1 = {img:null, x:430, y:1030, speed: 10, fromY: 1030, toY: 1150};
 var monster2 = {x:1800, y: 440};
 var monster3 = {x:1860, y: 1280};
 
-redShotHImg.src = '../img/redShot.png';
+redShotVImg.src = '../img/redShotV.png';
 blueShotHImg.src = '../img/blueShot.png';
 
 //===========================================UPDATE=====================================================
@@ -131,12 +131,11 @@ for(var i = 0; i < maxShot; i++)
 {
     var redShot = {};
     var blueShot = {};
-
-    redShot.startX = playerOne.x;
-    redShot.right = {posX:redShot.startX, posY:redShot.startY};
-    redShot.left = {posX:redShot.startX, posY:redShot.startY};
-    redShot.colRight = true;
-    redShot.colLeft = true;
+    redShot.startY = playerOne.y + playerOne.sizeY;
+    redShot.up = {posX:redShot.startX, posY:redShot.startY};
+    redShot.down = {posX:redShot.startX, posY:redShot.startY};;
+    redShot.colUp = true;
+    redShot.colDown = true;
     redShots[i] = redShot;
 
     blueShot.startX = playerTwo.x;
@@ -236,22 +235,10 @@ for(var i = 0; i < blueShotCurCnt; i++)
 
 function northSouthEastWestShot()
 {
-    for(var i = 0; i < maxShot; i++)
+   for(var i = 0; i < maxShot; i++)
     {
         if(i < redShotCurCnt)
         {
-            if(redShots[i].colRight)
-            {
-                redShots[i].right.posX += redShotSpeed;
-                surface.drawImage(redShotHImg, redShots[i].right.posX, 
-                            redShots[i].right.posY, shotSizeX, shotSizeY);
-            }
-            if(redShots[i].colLeft)
-            {
-                redShots[i].left.posX -= redShotSpeed;
-                surface.drawImage(redShotHImg, redShots[i].left.posX, 
-                            redShots[i].left.posY, shotSizeX, shotSizeY);
-            }
             if(redShots[i].colUp)
             {
                 redShots[i].up.posY -= redShotSpeed;
@@ -275,7 +262,6 @@ function northSouthEastWestShot()
             redShots[i].down = {posX:redShot.startX, posY:redShot.startY};
         }
     }
-
     for(var i = 0; i < maxShot; i++)
     {
         if(i < blueShotCurCnt)
