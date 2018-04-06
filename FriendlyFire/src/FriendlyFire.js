@@ -10,16 +10,16 @@ line.autoplay = true;
 
 
 //SFX//
-var CoinSFX = new Audio('../SFX/Coin.wav');
-var JumpSFX = new Audio('../SFX/Jump.wav');
-var UISFX = new Audio('../SFX/UI.mp3');
-var Laser1SFX = new Audio('../SFX/Laser1.mp3');
-var Laser2SFX = new Audio('../SFX/Laser2.mp3');
-var Teleport1SFX = new Audio('../SFX/Teleport1.wav');
+var CoinSFX       = new Audio('../SFX/Coin.wav');
+var JumpSFX       = new Audio('../SFX/Jump.wav');
+var UISFX         = new Audio('../SFX/UI.mp3');
+var Laser1SFX     = new Audio('../SFX/Laser1.mp3');
+var Laser2SFX     = new Audio('../SFX/Laser2.mp3');
+var Teleport1SFX  = new Audio('../SFX/Teleport1.wav');
 var TrampolineSFX = new Audio('../SFX/Trampoline.wav');
-var GameOverSFX = new Audio('../SFX/gameover.mp3');
-var GameWinSFX = new Audio('../SFX/gamewin.mp3');
-var BoxSFX = new Audio('../SFX/Box.wav');
+var GameOverSFX   = new Audio('../SFX/gameover.mp3');
+var GameWinSFX    = new Audio('../SFX/gamewin.mp3');
+var BoxSFX 	      = new Audio('../SFX/Box.wav');
 
 //volume
 line.volume = 0.15;
@@ -54,8 +54,8 @@ function PLAYER1()
     this.sprite = 0;
     this.maxSprite = 11;
     this.minSprite = 0;
-	this.isDead = false;
-	this.isWin = false;
+	this.isDead = false; //
+	this.isWin = false;  //
 	
 }
 
@@ -75,6 +75,7 @@ var space = false;
 var playbutton = false;
 var playgame = false;
 var stage = 0;
+var completedStore = 0; //added
 var completed = 0;
 var entered = 0; //debugging tool
 var cheatcode = false;
@@ -108,7 +109,7 @@ var map1 = {
 		[6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[6,3,3,0,0,0,3,3,3,3,3,3,3,3,0,0,0,3,3,6],
-		[6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+		[6,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,6],
 		[6,0,0,3,3,3,0,0,0,0,0,0,0,0,3,3,3,0,0,6],
 		[6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
 		[6,0,3,0,0,0,3,0,0,0,0,0,0,3,0,0,0,3,0,6],
@@ -148,12 +149,6 @@ door1.img = sprites[7];
 door2.img = sprites[2];
 door3.img = sprites[2];
 door4.img = sprites[2];
-//████████████████████████████████████████████████████████████
-
-
-
-
-//████████████████████████████████████████████████████████████
 
 function update()
 {
@@ -173,23 +168,19 @@ function reset()
 function unlock()
 {
 	
-	if(completed == 1)
-	{
-		door2.img = sprites[7];
-	}
-	if(completed == 2)
-	{
-		door3.img = sprites[7];
-	}
-	if(completed == 3)
+	if(completed >= 3)
 	{
 		door4.img = sprites[7];
 	}
+	if(completed >= 2)
+	{
+		door3.img = sprites[7];
+	}
+	if(completed >= 1)
+	{
+		door2.img = sprites[7];
+	}
 }
-
-///////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////
 
 function level()
 {
@@ -219,83 +210,82 @@ function level()
 			reset();
 		}
 	
-	canvas.style.backgroundImage = "url('../img/mainbg.png')";
-	animator(playerOne, left, right); 
-	playerController1(playerOne, left, right, up);
-	doorInteract();
-	interactCollision();
-	draw1();
-	render1();
-	textBox();
+		canvas.style.backgroundImage = "url('../img/mainbg.png')";
+		animator(playerOne, left, right); 
+		playerController1(playerOne, left, right, up);
+		doorInteract();
+		interactCollision();
+		draw1();
+		render1();
+		textBox();
 	}
 	else if(stage == 1)		
 	{
-	checkCollision(playerOne);
-	checkCollision(playerTwo);
-	MoveObject();
-	animator(playerOne, controls.left, controls.right); 
-	animator(playerTwo, controls.left2, controls.right2); 
-	animateCoin();
-	CoinCheck(playerOne, coin);
-	CoinCheck(playerTwo, coin);
-	playerController(playerOne, controls.left, controls.right , controls.up, controls.escape);
-	playerController(playerTwo, controls.left2, controls.right2, controls.up2);
-	draw();
-	render();
-	Death();
+		checkCollision(playerOne);
+		checkCollision(playerTwo);
+		MoveObject();
+		animator(playerOne, controls.left, controls.right); 
+		animator(playerTwo, controls.left2, controls.right2); 
+		animateCoin();
+		CoinCheck(playerOne, coin);
+		CoinCheck(playerTwo, coin);
+		playerController(playerOne, controls.left, controls.right , controls.up, controls.escape);
+		playerController(playerTwo, controls.left2, controls.right2, controls.up2);
+		draw();
+		render();
+		Death();
 	}
 	else if(stage == 2)
 	{
-	animator(playerOne, controls.left, controls.right); 
-	animator(playerTwo, controls.left2, controls.right2);  
-	animateCoin();
-	playerController(playerOne, controls.left, controls.right , controls.up, controls.escape);
-	playerController(playerTwo, controls.left2, controls.right2, controls.up2);
-	CoinCheck(playerOne, coin);
-	CoinCheck(playerTwo, coin);
-	checkCollision(playerOne);
-	checkCollision(playerTwo);
-	draw();
-	render();
-	
+		canvas.style.backgroundImage = "url('../img/background.png')";
+		animator(playerOne, controls.left, controls.right); 
+		animator(playerTwo, controls.left2, controls.right2);  
+		animateCoin();
+		playerController(playerOne, controls.left, controls.right , controls.up, controls.escape);
+		playerController(playerTwo, controls.left2, controls.right2, controls.up2);
+		CoinCheck(playerOne, coin);
+		CoinCheck(playerTwo, coin);
+		checkCollision(playerOne);
+		checkCollision(playerTwo);
+		draw();
+		render();
+		
 	}
 	else if(stage == 3)
 	{
-
-	animator(playerTwo, controls.left, controls.right); 
-	animator(playerOne, controls.left2, controls.right2); 
-	animateCoin();
-	gameManager();
-	playerController3(playerOne, controlOne);
-	playerController3(playerTwo, controlTwo);
-	
-	//draw();
-	render3();
+		animator(playerTwo, controls.left, controls.right); 
+		animator(playerOne, controls.left2, controls.right2); 
+		animateCoin();
+		gameManager();
+		playerController3(playerOne, controlOne);
+		playerController3(playerTwo, controlTwo);
 		
+		//draw();
+		render3();
+			
 	}
 	else if(stage == 4)
 	{
-
-	animator(playerOne, controls.left, controls.right); 
-	animator(playerTwo, controls.left2, controls.right2);  
-	playerController(playerOne, controls.left, controls.right , controls.up, controls.escape);
-	playerController(playerTwo, controls.left2, controls.right2, controls.up2);
-	//draw();
-	collision();
-	render();
-	Laser();
-	animateCoin ();
-	moveSawX(saw1);
-	moveSawX(saw2);
-	moveSawX(saw3);
-	Shooting();
-	TramplineColCheck();
-	ShotColCheck();
-	if(laserDoor.isClosed == false)
-	{
-		LaserDoorOpen();
-	}
-	Death();
+		animator(playerOne, controls.left, controls.right); 
+		animator(playerTwo, controls.left2, controls.right2);  
+		playerController(playerOne, controls.left, controls.right , controls.up, controls.escape);
+		playerController(playerTwo, controls.left2, controls.right2, controls.up2);
+		//draw();
+		collision();
+		render();
+		Laser();
+		animateCoin ();
+		moveSawX(saw1);
+		moveSawX(saw2);
+		moveSawX(saw3);
+		Shooting();
+		TramplineColCheck();
+		ShotColCheck();
+		if(laserDoor.isClosed == false)
+		{
+			LaserDoorOpen();
+		}
+		Death();
 	}
 	
 }
@@ -320,9 +310,19 @@ function onKeyDown(event)
 			down = true;
 			break;
 		case 74: // J
-			cheatcode = true;
-		//ADD PLAYER 2 INPUT unless menu
-		
+			if(cheatcode)
+			{
+				playerOne.isDead = false;
+				playerTwo.isDead = false; 
+			}
+			else
+			{
+				//completedStore = completed;
+				//completed = 3;
+			}
+			cheatcode = !cheatcode;
+			console.log("cheatcode: ", cheatcode, completed);
+			//completed = completedStore;		
 		}
 	}
 	else if(playerOne.img = sprites[0])
@@ -381,8 +381,27 @@ function playerController1(player, inleft, inright, inup)
 	}
 	var gravity1Power = 3;
 	jump(player, gravity1Power);
-	gravity1(player, 10);
-	groundCheck1(player, 3, gravity1Power);//	this.player
+	gravity(player, 10);
+	groundCheck(player, 3, gravity1Power, map1);//	this.player
+}
+
+function Death()
+{
+	if(playerOne.isDead || playerTwo.isDead) 
+	{
+		//game over;
+		console.log("game over");
+		if(cheatcode == false)
+		{
+			isDead = true;
+			playerOne.x = 50; 
+			playerOne.y = 300;
+			playerTwo.x = 0;
+			playerTwo.y = 512;
+			backToMainMenu();
+			
+		}
+	}
 }
 
 function jump(player, gravity1Power)
@@ -393,38 +412,6 @@ function jump(player, gravity1Power)
 		player.y_velocity *= 0.7;
 		player.velocityY += gravity1Power;
 	}
-}
-//██████████████████████████████gravity1██████████████████████████████
-function gravity1(player, gravity1Power)
-{
-	if(!player.isGround)
-	{
-		player.y += gravity1Power;
-	}
-
-
-	if(player.isGround && parseInt(player.y/SIZE) * SIZE < player.y)//fix position y;
-	{
-		player.y = parseInt(player.y/SIZE) * SIZE;
-	}
-}
-//██████████████████████████████Collision██████████████████████████████
-function groundCheck1(player, gap, rayLength)//n is number of raycasts
-{
-	var bottomY = parseInt((player.y + player.sizeY + rayLength)/SIZE);
-	if(bottomY > map1.rows) return false;
-	
-	player.isGround = false;
-	if(map1.tiles[bottomY][parseInt((player.x + gap)/SIZE)] != 0) player.isGround = true; 
-	if(map1.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
-	if(map1.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
-	
-	if(player.isGround)
-	{
-		player.isJumping = false;
-		player.velocityY = 0;
-
-	}	
 }
 
 function rayCastCheck1(player, Gap, rayLength)
@@ -464,6 +451,10 @@ function rayCastCheck1(player, Gap, rayLength)
 //enable(playerOne, 1, 100,100);// this changes the spawn of his location and changes his sprite back to normal (object, sprite#, x, y)
 function textBox()
 {
+	if(cheatcode) //added
+	{
+		unlock();
+	}
 	if(talking)
 	{
 		var text= [["Hello fellow hunters.", "I'm about to send you on a dangerous mission." ,
@@ -604,24 +595,13 @@ function draw1() {
 
     //Draw everything
 }
-//████████████████████████████████████████████████████████████
-/*
-function collision()
-{
-	if(player.x && player.y > map.tiles[1])
-	{
-		
-	}
-	
 
-}
-*/
 function doorInteract()
 {
 	var imported = document.createElement("script")//<script>
 	if(playerOne.x < door1.x + 64 && playerOne.x > door1.x && playerOne.y < door1.y + 64 && playerOne.y > door1.y)
 	{
-		imported.src = "stage2.js";//this runs the second script
+		imported.src = "stage1.js";//this runs the second script
 		document.body.appendChild(imported);
 		entered = 1;
 		stage = 2;
@@ -631,7 +611,7 @@ function doorInteract()
 	{
 		
 		
-		imported.src = "stage1.js";//this runs the second script
+		imported.src = "stage2.js";//this runs the second script
 		document.body.appendChild(imported);
 		entered = 1;
 		stage = 1;
@@ -642,14 +622,14 @@ function doorInteract()
 
 		
 		
-		imported.src = "stage4.js";//this runs the second script
+		imported.src = "stage3.js";//this runs the second script
 		document.body.appendChild(imported);
 		entered = 1;
 		stage = 4;
 	}
 	if(playerOne.x < door4.x + 64 && playerOne.x > door4.x && playerOne.y < door4.y + 64 && playerOne.y > door4.y && completed > 2 && door4.img == sprites[7])
 	{
-		imported.src = "stage3.js";//this runs the second script
+		imported.src = "stage4.js";//this runs the second script
 		document.body.appendChild(imported);
 		entered = 1;
 		stage = 3;
@@ -707,4 +687,124 @@ function render1()
 		
 			
 		
+}
+
+function rayCastCheck(player, Gap, rayLength, map)
+{
+	var centerPos 	= {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
+	var leftRay 	= centerPos.x - (player.sizeX/2 + rayLength);
+	var rightRay 	= centerPos.x + (player.sizeX/2 + rayLength);
+	var upRay 		= centerPos.y - (player.sizeY/2 + rayLength);
+	var downRay 	= centerPos.y + (player.sizeY/2 + rayLength);
+	
+	if((controls.left && controls.up) || (controls.left2 && controls.up2))
+	{
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt(leftRay/SIZE)] != 0){
+		console.log("false");
+		 return false;
+		}
+		else
+			console.log("t");
+	}
+	else if((controls.right && controls.up) || (controls.right2 && controls.up2))
+	{
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+	}
+	
+	if(controls.left || controls.left2)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		return true;
+	}
+	else if(controls.right || controls.right2)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		return true;
+	}
+	else if(controls.up || controls.up2)
+	{
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
+		return true;
+	}
+}
+
+function rayCastCheck2(player, Gap, rayLength, control, map)
+{
+	var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
+	var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
+	var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
+	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
+	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
+
+	if(control.left)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
+		return true;
+	}
+	else if(control.right)
+	{
+		if( map.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		if( map.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
+		return true;
+	}
+	else if(control.up)
+	{
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
+		if( map.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
+		return true;
+	}
+}
+
+function jump(player, gravityPower)
+{
+	if(player.isJumping)
+	{
+		player.y += player.velocityY;
+		player.y_velocity *= 0.7;
+		player.velocityY += gravityPower;
+	}
+}
+
+function gravity(player, gravityPower, restrict)
+{
+	if(restrict && player.y > restrict) return;
+	
+	if(!player.isGround)
+	{
+		player.y += gravityPower;
+	}
+
+
+	if(player.isGround && parseInt(player.y/SIZE) * SIZE < player.y)//fix position y;
+	{
+		player.y = parseInt(player.y/SIZE) * SIZE;
+	}
+}
+
+function groundCheck(player, gap, rayLength, map)//n is number of raycasts
+{
+	var bottomY = parseInt((player.y + player.sizeY + rayLength)/SIZE);
+	if(bottomY > map.rows) return false;
+	
+	player.isGround = false;
+	if(map.tiles[bottomY][parseInt((player.x + gap)/SIZE)] != 0) player.isGround = true; 
+	if(map.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
+	if(map.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
+	
+	if(player.isGround)
+	{
+		player.isJumping = false;
+		player.velocityY = 0;
+
+	}	
 }

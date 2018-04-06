@@ -1,137 +1,169 @@
-canvas.style.backgroundImage = "url('../img/bkg2.gif')";
-canvas.width = 1280 * 2; 							  // Sets the canvas width to 640 px. Note that it's a regular property not accessing the .style
-canvas.height = 640 * 2;	
+canvas.style.backgroundImage = "url('../img/bkg.gif')";
+canvas.width = 1280 * 2.5; 							  // Sets the canvas width to 640 px. Note that it's a regular property not accessing the .style
+canvas.height = 640 * 2.5;	
 var surface = canvas.getContext("2d");
-line.src = "../music/Sao.ogg";
+line.src = "../music/Kevin.mp3";
 //--------------------------------------------PLAYER DATA ------------------------------------------------------------------------
 // x = start position, y = start position, speed = players speed (becareful when changing)
-//var playerOne = {img:null, x:200, y: 384, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false, isDead: false};  
-//var playerTwo = {img:null, x:256, y: 576, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false, isDead: false};
-var background = {img:null};
-var controls;                     //Object for buttons
-function PLAYER4()
-{
-    this.img = null;
-    this.x = 0; 
-    this.y = 0; 
-    this.speed = 10; 
-    this.sizeX = 64;
-    this.sizeY = 64; 	
-    this.isGround = false; 
-    this.velocityX = 0;
-    this.velocityY = 0; 
-    this.isJumping = false; 
-    this.collisionLeft = false;
-    this.collisionRight = false; 
-    this.collisionUp = false;
-    this.dir = 0;	
-    this.facing = 0; // 0 = left, 1 = right
-    this.sprite = 0;
-    this.maxSprite = 11;
-    this.minSprite = 0;
-	this.isDead = false;
-	this.isWin = false;
-	
-}
 
-var playerOne = new PLAYER4();
-playerOne.x = 200;
-playerOne.y = 384;
 
-var playerTwo = new PLAYER4();
-playerTwo.x = 256;
-playerTwo.y = 576;
+
+playerOne.x = 300;
+playerOne.y = 500;
+playerTwo.x = 250;
+playerTwo.y = 200;
+
+playerOne.isDead = false;
+playerTwo.isDead = false;
+
+
 //---------------------------------------------GAME DATA ------------------------------------------------------------------------
 
-//to add asset, place name here of image saved under img folder and call it in map5 array by its placement here. ex: "dirt" = 2
-var images5 = ["empty","playerTwo", "Tile", "Tile2" ,"Tile3", "Tile4", "Tile5","Trampoline", "purplecoin", "playerOne", "bkg2", "Raser","pause", "saw"]; 
-var sprites5 = []; 
+//to add asset, place name here of image saved under img folder and call it in map4 array by its placement here. ex: "dirt" = 2
+var images4 = ["empty","playerTwo", "dirt", "grass" ,"grasstop", "empty", 
+			"dooropen","monster", "purplecoin", "playerOne", "Saw", "redcoin"];
+var mapImg = ["empty", "DarkGrey_Angle", "DarkGrey_Box", "DarkGrey_TrimmedBox",
+				"LightGrey_Angle", "empty", "LightGrey_Box",
+				"Orange_Angle", "Orange_Box", "Orange_TrimmedBox"];
+var displayImg = ["jansick", "giphy", "neonLight", "neonStar", "neonFlower", "neonCherry", "downSign"];
+				
+var doorZero = {isOpened: false, shape: "vertical", size: 128, x1:5,y1:3, x2:5, y2:4, curSize:128};
+var doorOne = {isOpened: false, shape: "vertical", size: 128, x1:13,y1:6, x2:13, y2:7, curSize:128};
+var doorTwo = {isOpened: false, shape: "horizontal", size: 128, x1:3, y1:18, x2:4, y2:18, curSize:128};
+var doorThree = {isOpened: false, shape: "vertical", size: 128, x1:19, y1:15, x2:19, y2:16, curSize:128};
+
+var buttonZero = {isPressed: false, prev: 0, posX: 600, posY: 450, size: 60, tag:0};
+var buttonOne = {isPressed: false, prev: 0, posX: 600, posY: 450, size: 60, tag:1};
+var buttonTwo = {isPressed: false, prev: 0, posX: 375, posY: 1015, size: 60, tag:2};
+var buttonThree = {isPressed: false, prev: 0, posX: 770, posY: 1250, size: 60, tag:3};
+var buttonFour = {isPressed: false, prev: 0, posX: 1925, posY: 260, size: 60, tag:4};
+
+var portal = {sizeX: 60, sizeY: 110, fromX: 1020, fromY: 1300, toX: 1280, toY:200};
+
+var saw1 = {size:64, fromX:620, fromY: 330, toX: 400, toY: 330, curX:620, curY: 330, speed: 10};
+var saw2 = {size:64, fromX:975, fromY: 200, toX: 975, toY: 1070, curX:975, curY: 200, speed: 10};
+var saw3 = {size:64, fromX:850, fromY: 1250, toX: 350, toY: 1250, curX:350, curY: 1250, speed: 12};
+var saw4 = {size:64, fromX:1650, fromY: 870, toX: 1300, toY: 870, curX:1300, curY: 870, speed: 7};
+//0, -600, 60, 3500
+var timerBeam = {sizeX:60, sizeY:3500, posX:-100, speed: 3.5, enabled: false};
+var crown = {sizeX: 100, sizeY: 100, posX: 2750, posY: 950, speed: 3};
+var encore = {sizeX: 1000, sizeY: 160, posX: 2050, posY: 1200, speed: 7};
+sawArr = [];
+
+
+
+
+var spikesImg = new Image();
+var doorImgV = new Image();
+var doorImgH = new Image();
+var buttonImg = new Image();
+var portalImgFrom1 = new Image();
+var portalImgTo1 = new Image();
+var sawImg = new Image();
+var redShotHImg = new Image();
+var redShotVImg = new Image();
+var blueShotHImg = new Image();
+var blueShotVImg = new Image(); 
+var timerBeamImg = new Image();
+var crownImg = new Image();
+var encoreImg = new Image();
+var sprites4 = []; 
+var mapsprites = [];
+var dpsprites = [];
+
 var SIZE = 64; 
-var map5 = {
-	rows: 20,	
-	cols: 40, 
+var map4 = {
+	rows: 25,	
+	cols: 50, 
 	tiles:
-	[
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //This array is used to draw the map5. Just read through the image[] and place 
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //that asset where you want it in the map5 by using its place number.
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],            //ex. 2,2,2,2,2,2,2,2 to draw the ground
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0],
-		[0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0],
-		[0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,5,2,0],
-		[0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,6,6,6,6,0,0,0,6,6,6,6,0,0,0,0,0,0,0,0,0,2,5,2,0],
-		[0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,6,5,5,6,0,0,0,6,5,5,6,0,0,0,0,0,0,0,0,0,2,5,2,0],
-		[0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,6,6,6,6,0,0,0,6,6,6,6,0,0,0,0,0,0,0,0,0,2,5,2,0],
-		[0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,5,5,5,5,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,0,2,5,2,0],
-		[0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,6,6,6,6,0,0,0,6,6,6,6,0,0,0,3,7,3,0,0,0,2,5,2,0],
-		[0,0,0,3,3,3,0,0,0,4,7,4,0,0,0,0,6,6,6,6,5,7,5,6,6,6,6,0,0,0,3,3,3,0,0,0,2,5,2,0],
-		[0,0,0,3,3,3,0,0,0,5,5,5,0,0,0,0,6,6,6,6,5,5,5,6,6,6,6,0,0,0,3,3,3,0,0,0,2,2,2,0],
-		[0,0,0,3,3,3,0,0,0,4,4,4,0,0,0,0,6,6,6,6,0,0,0,6,6,6,6,0,0,0,5,5,5,0,0,0,2,2,2,0],
+	[   //       5         10        15        20        25
+		[2,2,2,1,2,2,0,0,0,0,2,2,2,1,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[2,2,3,2,2,2,0,0,0,0,2,2,3,2,2,2,2,2,3,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[8,8,8,8,8,8,0,0,0,0,8,8,8,2,0,0,0,2,3,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[2,0,0,0,0,0,0,0,0,0,0,2,8,2,0,0,0,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,8,2],            //This array is used to draw the map44. Just read through the image[] and place 
+		[2,0,0,0,0,0,0,0,0,0,0,2,8,2,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,8,2],            //that asset where you want it in the map4 by using its place number.
+		[2,2,2,2,2,2,0,0,0,0,0,2,8,3,0,0,0,2,3,2,2,2,2,0,2,2,0,2,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,8,2],        //ex. 2,2,2,2,2,2,2,2 to draw the ground
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,0,2,2,0,2,0,3,3,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,8,2],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,2,3,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,8,2],
+		[0,0,0,0,0,0,0,0,0,2,2,2,8,2,0,0,0,3,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,8,2], 
+		[2,2,2,2,2,2,2,2,2,2,3,2,8,2,2,0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2], 
+		[2,2,1,2,2,2,2,2,2,2,2,2,8,2,2,0,0,2,2,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[2,2,2,2,2,2,2,2,1,2,2,2,8,3,2,0,0,2,3,2,0,0,0,0,0,0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[0,0,3,2,2,2,2,2,2,2,2,2,8,2,2,0,0,2,2,2,0,0,0,0,0,0,0,2,2,3,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[3,2,2,2,2,2,2,2,0,0,0,0,0,2,2,0,0,2,2,2,0,0,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[2,2,2,2,2,2,2,0,0,0,0,0,0,2,2,0,0,2,2,2,0,0,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,8,2],
+		[2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,8,2], //15
+		[3,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,8,8,8,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,8,2],
+		[2,2,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,8,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,8,2],
+		[2,2,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,8,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,8,2],
+		[2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,8,8,8,8,8,8,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,8,2],
+		[2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,1,1,8,2,2,2,2,2,2,2,3,5,5,5,5,5,5,5,5,5,5,5,5,2,8,8,2],
+		[3,2,0,2,2,0,0,0,2,0,0,0,2,0,0,0,0,2,2,2,2,8,8,9,9,8,2,2,2,2,2,3,2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[2,2,0,0,0,0,2,0,0,0,2,0,0,0,8,8,8,8,8,8,8,8,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
+		[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,2,2,3,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,8,2,2],
 	],
-	
 };
 
-//============================
-var coin = {img:null, x: 2368, y: 448};
-var saw1 = {img:null, size:64, fromX:620, fromY: 330, toX: 400, toY: 330, curX:620, curY: 300, speed: 10};
-var saw2 = {img:null, size:64, fromX:2020, fromY: 500, toX: 770, toY: 1070, curX:770, curY: 385, speed: 13};
-var saw3 = {img:null, size:64, fromX:2020, fromY: 500, toX: 770, toY: 1070, curX:770, curY: 512, speed: 9};
-var button = {img:null, size:64, x: 2112, y:512};
-var coinSprite = 0;
+
+var blueCoin = {img:null, x: encore.posX + 730, y: encore.posY - 30}; 
+var redCoin = {img:null, x: encore.posX + 460, y: encore.posY - 30};
+var blueCoinSprite = 0;
+var redCoinSprite = 3;
 var coinMax = 16;
-var TramCollider = {x:0, y:0, width: 50, height:60};
-var TramCollider1 = {x:0, y:0, width: 50, height:60};
-var TramCollider2 = {x:0, y:0, width: 50, height:60};
-var raser = {img: null, x:-50, y:0, speed: 1, velocity:1, isMoving: true};
+
+var redShots = [];
+var blueShots = [];
+var redShotEnabled = false;
+var blueShotEnabled = false;
+var redShotCurCnt = 0;
+var redShotReCnt = 0;
+var blueShotCurCnt = 0;
+var blueShotReCnt = 0;
+var maxShot = 1111;
+var redShotSpeed = 12;
+var blueShotSpeed = 12;
+var shotSizeX = 25;
+var shotSizeY = 25;
+
 
 setInt = setInterval(update, 33.34);
 
-
-
-//=============LaserDoor==================
-var laserDoor = {x:374, y:576, sizeX:13, sizeY:64, speed:2, isClosed: true};
-var laserDoorSp = new Image();
-laserDoorSp.src = '../img/LaserDoor.png';
-
-function LaserDoorOpen()
+//=======================================INITIALIZE SPIRTES ============================================
+for (var i = 0; i < images4.length; i++)                                                                //takes images4 from image[] and turns them to assets in sprite[]
 {
-
-	if(laserDoor.y > 460)
-	{
-		laserDoor.y -= laserDoor.speed;
-		laserDoor.isclosed = true;
-	}
-
+	sprites4[i] = new Image();
+	sprites4[i].src = '../img/'+images4[i]+'.png';
 }
-//=========================================
-
-//==============Button=====================
-var doorButton = {x: 1344, y: 900, SIZE:64};
-var doorButtonSp = new Image();
-doorButtonSp.src = '../img/pause.png';
-//=========================================
-
-//=======================bullets==============
-var blueHShot = new Image();
-var blueVShot = new Image();
-var redHShot = new Image();
-var redVShot = new Image();
-var ShotCurCnt = 0;
-var redShots = [];
-var blueShots = [];
-var maxShot = 999;
-var bulletSpeed = 15;
-var bulletSize = 64;
-blueHShot.src = '../img/blueShotH.png';
-blueVShot.src = '../img/blueShotV.png';
-redHShot.src = '../img/redShotH.png';
-redVShot.src = '../img/redShotV.png';
-
+for (var i = 0; i < mapImg.length; i++)
+{
+	mapsprites[i] = new Image();
+	mapsprites[i].src = '../img/'+mapImg[i]+'.png';
+}
+for (var i = 0; i < displayImg.length; i++)
+{
+	dpsprites[i] = new Image();
+	dpsprites[i].src = '../img/' +displayImg[i]+'.png';
+}
+spikesImg.src = '../img/spikes.png';
+doorImgV.src = '../img/neonWallV.png';
+doorImgH.src = '../img/neonWallH.png';
+buttonImg.src = '../img/neonButton.png';
+portalImgFrom1.src = '../img/WavePortal.png';
+portalImgTo1.src = '../img/WavePortal2.png';	
+redShotHImg.src = '../img/redShotH.png';
+redShotVImg.src = '../img/redShotV.png';
+blueShotHImg.src = '../img/blueShotH.png';
+blueShotVImg.src = '../img/blueShotV.png';
+sawImg.src = '../img/Saw.png';			
+timerBeamImg.src = '../img/beam.png';	
+crownImg.src = '../img/crown.png';
+encoreImg.src = '../img/encore.png';		  
+																										//animated sprite stay outside of map4 array
+playerOne.img = sprites4[9];                                                                            //sprites4heet for playerOne
+playerTwo.img = sprites4[1];																			   //sprites4heet for playerTwo
+blueCoin.img = sprites4[8];	
+redCoin.img = sprites4[11];
 
 for(var i = 0; i < maxShot; i++)
 {
@@ -139,14 +171,16 @@ for(var i = 0; i < maxShot; i++)
 	var blueShot = {};
 	
 	redShot.startX = playerOne.x;
-	redShot.startY = playerOne.y + playerOne.sizeY/2;
+	redShot.startY = playerOne.y + playerOne.sizeY;
 	redShot.right = {posX:redShot.startX, posY:redShot.startY};
 	redShot.left = {posX:redShot.startX, posY:redShot.startY};
 	redShot.up = {posX:redShot.startX, posY:redShot.startY};
 	redShot.down = {posX:redShot.startX, posY:redShot.startY};
-	redShots[i] = redShot;
 	redShot.colRight = true;
 	redShot.colLeft = true;
+	redShot.colUp = true;
+	redShot.colDown = true;
+	redShots[i] = redShot;
 	
 	blueShot.startX = playerTwo.x;
 	blueShot.startY = playerTwo.y + playerTwo.sizeY/2;
@@ -154,87 +188,125 @@ for(var i = 0; i < maxShot; i++)
 	blueShot.left = {posX:redShot.startX, posY:redShot.startY};
 	blueShot.up = {posX:redShot.startX, posY:redShot.startY};
 	blueShot.down = {posX:redShot.startX, posY:redShot.startY};
-	blueShots[i] = blueShot;
+	blueShot.colRight = true;
+	blueShot.colLeft = true;
 	blueShot.colUp = true;
 	blueShot.colDown = true;
+	blueShots[i] = blueShot;
 }
 
-var intShot = setInterval(shotCheck,1000);
+var intShot = setInterval(shotCheck, 1000);
 
 function shotCheck()
 {
-	ShotCurCnt++;
+	if(redShotEnabled && redShotCurCnt < maxShot)
+		redShotCurCnt ++;
+	if(blueShotEnabled && blueShotCurCnt < maxShot)
+		blueShotCurCnt++;
+	if(redShotEnabled && 34 * SIZE < playerOne.x && playerOne.y > 13 * SIZE)
+		redShotEnabled = false;
+	if(blueShotEnabled && 34 * SIZE < playerTwo.x && playerTwo.y > 13 * SIZE)
+		blueShotEnabled = false;
 }
 
-function ShotColCheck()
+function shotColCheck()
 {
-	for(var i = 0; i < ShotCurCnt; i++)
-    {
-        if(playerTwo.isDead) break;
-        for(var j = 0; j < 2; j++)
-        {
-            if(j == 0) 
-            {
-                centerX = redShots[i].right.posX + bulletSize/2;
-                centerY = redShots[i].right.posY + bulletSize/2;
-                //console.log(centerX, centerY);
-            }
-            if(j == 1) 
-            {
-                centerX = redShots[i].left.posX + bulletSize/2;
-                centerY = redShots[i].left.posY + bulletSize/2;
-            }
-            if(playerTwo.x < centerX && playerTwo.x + playerTwo.sizeX > centerX
-                && playerTwo.y < centerY && playerTwo.y + playerTwo.sizeY > centerY)
-            playerTwo.isDead = true;
-        }
-    }
-	
-	for(var i = 0; i < ShotCurCnt; i++)
-    {
-        if(playerOne.isDead) break;
-        for(var j = 0; j < 2; j++)
-        {
-            if(j == 0) 
-            {
-                centerX = blueShots[i].up.posX + bulletSize/2;
-                centerY = blueShots[i].up.posY + bulletSize/2;
-                //console.log(centerX, centerY);
-            }
-            if(j == 1) 
-            {
-                centerX = blueShots[i].up.posX + bulletSize/2;
-                centerY = blueShots[i].up.posY + bulletSize/2;
-            }
-            if(playerOne.x < centerX && playerOne.x + playerOne.sizeX > centerX
-                && playerOne.y < centerY && playerOne.y + playerOne.sizeY > centerY)
-              playerOne.isDead = true;
-        }
-    }
+	var centerX;
+	var centerY;
+
+	for(var i = 0; i < redShotCurCnt; i++)
+	{	
+		if(playerTwo.isDead) break;
+		for(var j = 0; j < 4; j++)
+		{
+			if(j == 0) 
+			{
+				centerX = redShots[i].right.posX + shotSizeX/2;
+				centerY = redShots[i].right.posY + shotSizeY/2;
+				//console.log(centerX, centerY);
+			}
+			if(j == 1) 
+			{
+				centerX = redShots[i].left.posX + shotSizeX/2;
+				centerY = redShots[i].left.posY + shotSizeY/2;
+			}
+			if(j == 2) 
+			{
+				centerX = redShots[i].up.posX + shotSizeX/2;
+				centerY = redShots[i].up.posY + shotSizeY/2;
+			}
+			if(j == 3) 
+			{
+				centerX = redShots[i].down.posX + shotSizeX/2;
+				centerY = redShots[i].down.posY + shotSizeY/2;
+			}
+			if(playerTwo.x < centerX && playerTwo.x + playerTwo.sizeX > centerX
+				&& playerTwo.y < centerY && playerTwo.y + playerTwo.sizeY > centerY)
+			playerTwo.isDead = true;
+		}
+	}
+	for(var i = 0; i < blueShotCurCnt; i++)
+	{
+		if(playerOne.isDead) break;
+		for(var j = 0; j < 4; j++)
+		{
+			if(j == 0) 
+			{
+				centerX = blueShots[i].right.posX + shotSizeX/2;
+				centerY = blueShots[i].right.posY + shotSizeY/2;
+			}
+			if(j == 1) 
+			{
+				centerX = blueShots[i].left.posX + shotSizeX/2;
+				centerY = blueShots[i].left.posY + shotSizeY/2;
+			}
+			if(j == 2) 
+			{
+				centerX = blueShots[i].up.posX + shotSizeX/2;
+				centerY = blueShots[i].up.posY + shotSizeY/2;
+			}
+			if(j == 3) 
+			{
+				centerX = blueShots[i].down.posX + shotSizeX/2;
+				centerY = blueShots[i].down.posY + shotSizeY/2;
+			}
+			if(playerOne.x < centerX && playerOne.x + playerOne.sizeX > centerX
+				&& playerOne.y < centerY && playerOne.y + playerOne.sizeY > centerY)
+			playerOne.isDead = true;
+		}
+	}
 }
 
-function Shooting()
+function northSouthEastWestShot()
 {
 	for(var i = 0; i < maxShot; i++)
 	{
-		Laser1SFX.play();
-		if(i < ShotCurCnt)
-		{
-		redShots[i].right.posX += bulletSpeed;
-		surface.drawImage(redHShot, redShots[i].right.posX, 
-		redShots[i].right.posY, bulletSize, bulletSize);
-		
-		redShots[i].left.posX -= bulletSpeed;
-		surface.drawImage(redHShot, redShots[i].left.posX, 
-		redShots[i].left.posY, bulletSize, bulletSize);
-		
-		blueShots[i].up.posY -= bulletSpeed;
-		surface.drawImage(blueVShot, blueShots[i].up.posX, 
-		blueShots[i].up.posY, bulletSize, bulletSize);	
-		
-		blueShots[i].down.posY += bulletSpeed;
-		surface.drawImage(blueVShot, blueShots[i].down.posX, 
-		blueShots[i].down.posY, bulletSize, bulletSize);	
+		if(i < redShotCurCnt)
+		{			
+			if(redShots[i].colRight)
+			{
+				redShots[i].right.posX += redShotSpeed;
+				surface.drawImage(redShotHImg, redShots[i].right.posX, 
+							redShots[i].right.posY, shotSizeX, shotSizeY);
+			}				
+			if(redShots[i].colLeft)
+			{
+				redShots[i].left.posX -= redShotSpeed;
+				surface.drawImage(redShotHImg, redShots[i].left.posX, 
+							redShots[i].left.posY, shotSizeX, shotSizeY);
+			}
+			if(redShots[i].colUp)
+			{
+				redShots[i].up.posY -= redShotSpeed;
+				surface.drawImage(redShotVImg, redShots[i].up.posX, 
+							redShots[i].up.posY, shotSizeX, shotSizeY);	
+			}
+			if(redShots[i].colDown)
+			{
+				redShots[i].down.posY += redShotSpeed;
+				surface.drawImage(redShotVImg, redShots[i].down.posX, 
+							redShots[i].down.posY, shotSizeX, shotSizeY);	
+			}
 		}
 		else
 		{
@@ -242,139 +314,65 @@ function Shooting()
 			redShots[i].startY = (playerOne.y + playerOne.sizeY/2 - 15);
 			redShots[i].right = {posX:redShot.startX, posY:redShot.startY};
 			redShots[i].left = {posX:redShot.startX, posY:redShot.startY };
-			
+			redShots[i].up = {posX:redShot.startX, posY:redShot.startY};
+			redShots[i].down = {posX:redShot.startX, posY:redShot.startY};
+		}
+	}
+	
+	for(var i = 0; i < maxShot; i++)
+	{
+		if(i < blueShotCurCnt)
+		{
+			if(blueShots[i].colRight)
+			{
+				blueShots[i].right.posX += blueShotSpeed;
+				surface.drawImage(blueShotHImg, blueShots[i].right.posX, 
+							blueShots[i].right.posY, shotSizeX, shotSizeY);
+			}				
+			if(blueShots[i].colLeft)
+			{
+				blueShots[i].left.posX -= blueShotSpeed;
+				surface.drawImage(blueShotHImg, blueShots[i].left.posX, 
+							blueShots[i].left.posY, shotSizeX, shotSizeY);
+			}
+			if(blueShots[i].colUp)
+			{
+				blueShots[i].up.posY -= blueShotSpeed;
+				surface.drawImage(blueShotVImg, blueShots[i].up.posX, 
+							blueShots[i].up.posY, shotSizeX, shotSizeY);	
+			}
+			if(blueShots[i].colDown)
+			{
+				blueShots[i].down.posY += blueShotSpeed;
+				surface.drawImage(blueShotVImg, blueShots[i].down.posX, 
+							blueShots[i].down.posY, shotSizeX, shotSizeY);	
+			}	
+		}
+		else
+		{
 			blueShots[i].startX = (playerTwo.x + playerTwo.sizeX/2 - 15);
 			blueShots[i].startY = (playerTwo.y + playerTwo.sizeY/2 - 15);
+			blueShots[i].right = {posX:blueShot.startX, posY:blueShot.startY};
+			blueShots[i].left = {posX:blueShot.startX, posY:blueShot.startY };
 			blueShots[i].up = {posX:blueShot.startX, posY:blueShot.startY};
 			blueShots[i].down = {posX:blueShot.startX, posY:blueShot.startY};
 		}
 	}
+	shotColCheck();
 }
-	
-//===========================================
+																			   //sprites4heet for coin
+//===========================================UPDATE=====================================================
 
-//======Trampoline=========================
-function TramplineColCheck()
-{
-	TramCollider.x = 640;
-	TramCollider.y = 1088;
-	TramCollider1.x = 1344;
-	TramCollider1.y = 1088;
-	TramCollider2.x = 1984;
-	TramCollider2.y =1024;
-	
-	var gap = 20;
-	if(!(playerTwo.y > (TramCollider.y + gap) ||
-		(playerTwo.y + playerTwo.sizeY) < TramCollider.y ||
-		playerTwo.x > (TramCollider.x + gap ) ||
-		(playerTwo.x + playerTwo.sizeX - 40) < TramCollider.x))
-		{
-			TrampolineSFX.play();
-			playerTwo.isJumping = true;
-			playerTwo.velocityY = -75;
-			controls.up2 = false;
-		}
-		
-	if(!(playerTwo.y > (TramCollider1.y + gap) ||
-	(playerTwo.y + playerTwo.sizeY) < TramCollider1.y ||
-	playerTwo.x > (TramCollider1.x + gap ) ||
-	(playerTwo.x + playerTwo.sizeX - 40) < TramCollider1.x))
-		{
-			TrampolineSFX.play();
-			playerTwo.isJumping = true;
-			playerTwo.velocityY = -75;
-			controls.up2 = false;
-		}
 
-	if(!(playerTwo.y > (TramCollider2.y + gap) ||
-	(playerTwo.y + playerTwo.sizeY) < TramCollider2.y ||
-	playerTwo.x > (TramCollider2.x + gap ) ||
-	(playerTwo.x + playerTwo.sizeX - 40) < TramCollider2.x))
-		{
-			TrampolineSFX.play();
-			playerTwo.isJumping = true;
-			playerTwo.velocityY = -75;
-			controls.up2 = false;
-		}		
-		
-	if(!(playerOne.y > (TramCollider.y + gap) ||
-	(playerOne.y + playerOne.sizeY) < TramCollider.y ||
-	playerOne.x > (TramCollider.x + gap ) ||
-	(playerOne.x + playerOne.sizeX - 40) < TramCollider.x))
-	{
-		TrampolineSFX.play();
-		playerOne.isJumping = true;
-		playerOne.velocityY = -75;
-		controls.up = false;
-	}
-	
-	if(!(playerOne.y > (TramCollider1.y + gap) ||
-	(playerOne.y + playerOne.sizeY) < TramCollider1.y ||
-	playerOne.x > (TramCollider1.x + gap ) ||
-	(playerOne.x + playerOne.sizeX - 40) < TramCollider1.x))
-		{
-			TrampolineSFX.play();
-			playerOne.isJumping = true;
-			playerOne.velocityY = -75;
-			controls.up = false;
-		}
 
-	if(!(playerOne.y > (TramCollider2.y + gap) ||
-	(playerOne.y + playerOne.sizeY) < TramCollider2.y ||
-	playerOne.x > (TramCollider2.x + gap ) ||
-	(playerOne.x + playerOne.sizeX - 40) < TramCollider2.x))
-		{
-			TrampolineSFX.play();
-			playerOne.isJumping = true;
-			playerOne.velocityY = -75;
-			controls.up = false;
-		}	
-}
 
-//==================Raser ===================
-function Laser()
-{
-	if(raser.isMoving != false)
-			raser.x += raser.speed;
 
-	surface.drawImage(raser.img, raser.x, raser.y, 10, 1280);
-}
-
-function Pause()
-{
-	if ((pause.x + 60 == playerOne.x && pause.y == playerOne.y) || (pause.x + 60 == playerTwo.x && pause.y == playerTwo.y))
-	{
-			raser.isMoving = false;
-			setTimeout(function(){ raser.isMoving = true; }, 3000);
-	}
-}
-
-//=======================================INITIALIZE SPIRTES ============================================
-for (var i = 0; i < images5.length; i++)                                                                //takes images5 from image[] and turns them to assets in sprite[]
-{
-	sprites5[i] = new Image();
-	sprites5[i].src = '../img/'+images5[i]+'.png';
-}
-																									   //animated sprite stay outside of map5 array
-playerOne.img = sprites5[9];                                                                            //sprites5heet for playerOne
-playerTwo.img = sprites5[1];																			   //sprites5heet for playerTwo
-coin.img = sprites5[8];																				   //sprites5heet for coin
-background.img = sprites5[10];
-raser.img = sprites5[11];
-saw1.img = sprites5[13];
-saw2.img = sprites5[13];
-saw3.img = sprites5[13];
-button.img = sprites5[15];
 
 //===========================================CONTROL INPUT ================================================
-controls = {
-
-	up: false, 
-	up2: false, 
-	left: false, 
-	left2: false, 
+controlOne = {
+	up: false,  
+	left: false,  
 	right: false, 
-	right2: false,
 	escape: false,
 	keyListner:function(event) 
 	{
@@ -382,26 +380,43 @@ controls = {
 		
 		switch(event.keyCode) 
 		{
-			case 65: //A
-				controls.left = keystate;
-			break;
-			case 68: //D
-				controls.right = keystate;
-			break;
-			case 87: //W
-				controls.up = keystate;
-			break;
 			case 37: //left
-				controls.left2 = keystate;
+				controlOne.left = keystate;
 			break;
 			case 39: //right
-				controls.right2 = keystate;
+				controlOne.right = keystate;
 			break;
 			case 38: //up
-				controls.up2 = keystate;
+				controlOne.up = keystate;
 			break;
 			case 27: // escape
-				controls.escape = keystate;
+				controlOne.escape = keystate;
+			break;
+			
+				
+		}
+	}
+}
+controlTwo = {
+	up: false, 
+	left: false, 
+	right: false, 
+	keyListner:function(event) 
+	{
+		var keystate = (event.type == "keydown")?true:false;
+		
+		switch(event.keyCode) 
+		{
+			case 65: //A
+				controlTwo.left = keystate;
+			break;
+			case 68: //D
+				controlTwo.right = keystate;
+			break;
+			case 87: //W
+				controlTwo.up = keystate;
+			break;
+			case 37: //left
 			break;
 		}
 	}
@@ -409,92 +424,18 @@ controls = {
 
 
 //================================================ANIMATION=============================================
-function animator(player, leftInput, rightInput, upInput)
-{
 
-    console.log("direction" + player.maxSprite);
-    console.log("facing" + player.facing);
-
-    player.sprite++;
-    if(player.sprite >= player.maxSprite)
-    {
-        player.sprite = 0;
-    }
-     if(leftInput)
-    {
-        player.dir = 2;
-        player.facing = 0;
-        player.maxSprite = 18;
-
-    }
-    if (!leftInput && player.facing == 0)
-    {
-        player.dir = 0;
-    }
-    if(rightInput)
-    {
-        player.dir = 3;
-        player.facing = 1;
-        player.maxSprite = 18;
-
-    }
-    if (!rightInput && player.facing == 1)
-    {
-        player.dir = 1;
-    }
-    if (!rightInput && !leftInput && player.maxSprite!= 11)
-    {
-        player.maxSprite = 11;
-    }
-    if (upInput && player.facing == 0)
-    {
-        player.dir = 4;
-        player.sprite = 2; 
-    }
-    if (upInput && player.facing == 1)
-    {
-        player.dir = 4;
-        player.sprite = 0; 
-    }
-    if (!upInput && !player.isGround && player.facing == 0)
-    {
-        player.dir = 4;
-        player.sprite = 3;
-    }
-    if (!upInput && !player.isGround && player.facing == 1)
-    {
-        player.dir = 4;
-        player.sprite = 1;
-    }
-}
 
 function animateCoin ()
 {
-	coinSprite++;
-	if(coinSprite == coinMax)
-		coinSprite = 0;
+	blueCoinSprite++;
+	redCoinSprite++;
+	blueCoinSprite %= coinMax;
+	redCoinSprite %= coinMax;
 }
 //==============================================CAMERA==================================================
 
 
-
-function moveSawX(saw)
-{
-	saw.curX += saw.speed;
-	var gap = 7;
-	if(saw.fromX < saw.curX ||saw.toX > saw.curX)
-		saw.speed *= -1;
-	if(playerOne.x + playerOne.sizeX > saw.curX + gap && playerOne.x < saw.curX + saw.size - gap &&
-		playerOne.y + playerOne.sizeY > saw.curY + gap && playerOne.y < saw.curY + saw.size - gap )
-		{
-			playerOne.isDead = true;
-		}
-	if(playerTwo.x + playerTwo.sizeX > saw.curX + gap && playerTwo.x < saw.curX + saw.size - gap &&
-		playerTwo.y + playerTwo.sizeY > saw.curY + gap && playerTwo.y < saw.curY + saw.size -gap )
-		{
-			playerTwo.isDead = true;
-		}
-}
 
 function clamp(value, min, max){
     if(value < min) return min;
@@ -508,218 +449,344 @@ function draw() {
 
     //Clamp the camera position to the world bounds while centering the camera around the player                                             
     var camX = clamp(-playerOne.x + canvas.width/2, -2000, 0);
-    
-    surface.translate( camX, 0 );
+    var camY = clamp(-playerOne.y + canvas.height/1.25, -map4.row, 0);
+
+    surface.translate( camX, camY );    
+
+    //Draw everything
 }
 
-function collision()
-{
-	var gap = 15;
-	if(raser.x > playerOne.x)
-		playerOne.isDead = true;
-	else if(raser.x > playerTwo.x)
-		playerTwo.isDead = true;
-	
-	if(!(playerTwo.y > (laserDoor.y) ||
-	(playerTwo.y + playerTwo.sizeY) < laserDoor.y ||
-	playerTwo.x > (laserDoor.x) ||
-	(playerTwo.x + playerTwo.sizeX) < laserDoor.x))
-	{
-		playerTwo.speed = 0;
-	}
-	else
-		playerTwo.speed = 10;
-	
-	if(!(playerOne.y > (doorButton.y + gap) ||
-	(playerOne.y + playerOne.sizeY) < doorButton.y ||
-	playerOne.x > (doorButton.x + gap ) ||
-	(playerOne.x + playerOne.sizeX - 40) < doorButton.x))
-	{
-		laserDoor.isClosed = false;
-	}
-	
-	if(!(playerOne.y > (coin.y) ||
-	(playerOne.y + playerOne.sizeY) < (coin.y)||
-	playerOne.x > (coin.x + 30) ||
-	(playerOne.x + playerOne.sizeX) < coin.x + 30))
-	{
-		if(completed == 2)
-		{
-		completed++;
-		}
-		CoinSFX.play();
-		isWin = true;
-		console.log("You Win");
-		backToMainMenu();
-	}
-	
-	if(!(playerTwo.y > (coin.y) ||
-	(playerTwo.y + playerTwo.sizeY) < (coin.y)||
-	playerTwo.x > (coin.x + 30) ||
-	(playerTwo.x + playerTwo.sizeX) < coin.x + 30))
-	{
-		if(completed == 2)
-		{
-		completed++;
-		}
-		CoinSFX.play();
-		console.log("You Win");
-		isWin = true;
-		backToMainMenu();
-	}
-	
-	if(playerOne.y + playerOne.sizeY > canvas.height - 20)
-		playerOne.isDead = true;
-	else if(playerTwo.y + playerTwo.sizeY > canvas.height - 20)
-		playerTwo.isDead = true;
-}
+
 //============================================CONTROLLER=================================================
 
-function playerController(player, inleft, inright, inup, inescape) 
+function playerController3(player, control) 
 {
-	if (player.x > 0 && inleft == true && rayCastCheck(player, 10, player.speed/2))
+	if (player.x > 0 && control.left == true && rayCastCheck2(player, 10, 5, control, map4))
 		player.x -= player.speed;
-	if (inright == true && player.x < map5.cols * SIZE && rayCastCheck(player, 10, player.speed/2))
+	if (control.right == true && player.x < map4.cols * SIZE && rayCastCheck2(player, 10, 5, control, map4))
 		player.x += player.speed;
-	if (player.y > 0 && inup == true && rayCastCheck(player, 10, player.speed/2)) //jump
+	if (player.y > 0 && control.up == true && rayCastCheck2(player, 10, 5, control, map4)) //jump
 	{
 		if(!player.isJumping)
 		{
 			JumpSFX.play();
 			player.isJumping = true;
-			player.velocityY = -30;
-			controls.up = false;
-			controls.up2 = false;
+			player.velocityY = -20;
+			control.up = false;
 		}
 	}
-	if(inescape == true)
-	{
-	backToMainMenu();
-	}
 	
+	if(control.escape == true)
+	{
+	backToMainMenu1();
+	}
+	//console.log(player.velocityY);
 	var gravityPower = 3;
 	jump(player, gravityPower);
-	gravity(player, 10);
-	groundCheck(player, 3, gravityPower);//	this.player
+	gravity(player, 10, 2000);
+	groundCheck(player, 6, gravityPower, map4);//	this.player
 }
 
-function backToMainMenu()
+function backToMainMenu1()
 {
 		stage = 0;
+}
+
+
+//==========================================game player================================================
+
+function spikesF(player)
+{
+	if(player.isDead) return;
+	
+	if(player.x + player.sizeX > 130 && player.x < 930 &&
+		player.y + player.sizeY > 1507 && player.y < 1537)
+		player.isDead = true;
+}
+
+function portalFunc(portal)
+{
+	var gap = 5;
+	if(playerOne.x + playerOne.sizeX > portal.fromX + gap && playerOne.x < portal.fromX + portal.sizeX - gap &&
+		playerOne.y + playerOne.sizeY > portal.fromY + gap && playerOne.y < portal.fromY + portal.sizeY - gap )
+	{
+		Teleport1SFX.play();
+		playerOne.x = portal.toX;
+		playerOne.y = portal.toY;
+	}
+	if(playerTwo.x + playerTwo.sizeX > portal.fromX + gap && playerTwo.x < portal.fromX + portal.sizeX - gap&&
+		playerTwo.y + playerTwo.sizeY > portal.fromY + gap && playerTwo.y < portal.fromY + portal.sizeY - gap )
+	{
+		Teleport1SFX.play();
+		playerTwo.x = portal.toX;
+		playerTwo.y = portal.toY;
+	}
+}
+
+var t2, t3;
+function addTiles()
+{	
+	if(buttonFour.isPressed && buttonFour.prev == 0)
+	{
+		buttonFour.prev = 1;
+		map4.tiles[14][25] = 6;
+		t2 = setInterval(add2, 300);
+	}
+}
+function add2()
+{
+	clearInterval(t2);
+	map4.tiles[14][26] = 6;
+	t3 = setInterval(add3, 300);
+}
+
+function add3()
+{
+	clearInterval(t3);
+	map4.tiles[13][26] = 6;
+}
+
+var timerBeamInt;
+function buttonFunc(button)
+{
+	if(button.isPressed) return;
+	var gap = 5;
+	if(playerOne.x + playerOne.sizeX > button.posX + gap && playerOne.x < button.posX + button.size - gap &&
+		playerOne.y + playerOne.sizeY > button.posY + gap && playerOne.y < button.posY + button.size - gap )
+	{
+		BoxSFX.play();
+		if(blueShotEnabled) blueShotEnabled = false;
+		//intStopShot = setInterval(stopShot, 5000);
+		if(button.tag == 2) timerBeam.enabled = true;
+		button.isPressed = true;
+		redShotEnabled = true;
+	}
+	if(playerTwo.x + playerOne.sizeX > button.posX + gap && playerTwo.x < button.posX + button.size - gap &&
+		playerTwo.y + playerOne.sizeY > button.posY + gap && playerTwo.y < button.posY + button.size - gap )
+	{
+		BoxSFX.play();
+		if(redShotEnabled) redShotEnabled = false;
+		//intStopShot = setInterval(stopShot, 5000);
+		if(button.tag == 2) timerBeam.enabled = true;
+		button.isPressed = true;
+		blueShotEnabled = true;
+	}
+}
+
+function stopShot()
+{
+	clearInterval(intStopShot);
+	redShotEnabled = false;
+	blueShotEnabled = false;
+}
+
+function moveSawX(saw)
+{
+	var gap = 7;
+	saw.curX += saw.speed;
+	if(saw.fromX < saw.curX ||saw.toX > saw.curX)
+		saw.speed *= -1;	
+
+	if(playerOne.x + playerOne.sizeX > saw.curX + gap && playerOne.x < saw.curX + saw.size - gap &&
+		playerOne.y + playerOne.sizeY > saw.curY + gap && playerOne.y < saw.curY + saw.size - gap )
+	{
+		playerOne.isDead = true;
+	}
+	if(playerTwo.x + playerTwo.sizeX > saw.curX + gap && playerTwo.x < saw.curX + saw.size - gap &&
+		playerTwo.y + playerTwo.sizeY > saw.curY + gap && playerTwo.y < saw.curY + saw.size -gap )
+	{
+		playerTwo.isDead = true;
+	}
+}
+function moveSawY(saw)
+{
+	var gap = 7
+	saw.curY += saw.speed;
+	if(saw.fromY > saw.curY ||saw.toY < saw.curY)
+		saw.speed *= -1;	
+
+	if(playerOne.x + playerOne.sizeX > saw.curX + gap && playerOne.x < saw.curX + saw.size - gap &&
+		playerOne.y + playerOne.sizeY > saw.curY + gap && playerOne.y < saw.curY + saw.size - gap)
+	{
+		playerOne.isDead = true;
+	}
+	if(playerTwo.x + playerTwo.sizeX > saw.curX + gap && playerTwo.x < saw.curX + saw.size - gap &&
+		playerTwo.y + playerTwo.sizeY > saw.curY + gap && playerTwo.y < saw.curY + saw.size - gap )
+	{
+		playerTwo.isDead = true;
+	}
+}
+
+
+function door(door, button, doorSpeed)
+{	
+	if(door.isOpened && button.prev == 1)
+		return;
+	if(button.isPressed && button.prev == 0)
+	{	
+		if(door.curSize <= 0)
+			door.isOpened = true;
+		else if(door.curSize > 0)
+			door.curSize -= doorSpeed;
+	}
+	
+	if(door.isOpened)
+	{
+		button.prev = 1;
+		map4.tiles[door.y1][door.x1] = 0;
+		map4.tiles[door.y2][door.x2] = 0;
+	}
+	else
+	{
+		map4.tiles[door.y1][door.x1] = 5;
+		map4.tiles[door.y2][door.x2] = 5;
+	}
+	
+	if(door.shape == "vertical")
+		surface.drawImage(doorImgV, door.x1*SIZE, door.y1*SIZE, 60, door.y1+door.curSize);
+	else if(door.shape == "horizontal")
+		surface.drawImage(doorImgH, door.x1*SIZE, door.y1*SIZE, door.x1+door.curSize, 60);
+	
+}
+
+function moveTimerBeam()
+{
+	if(!timerBeam.enabled) return;
+	var gap = 40;
+	
+	if(!(playerOne.isWin && playerTwo.isWin))
+	if(timerBeam.posX < 5 * SIZE)
+		timerBeam.posX += timerBeam.speed;
+	else
+		timerBeam.posX += timerBeam.speed + 2;
+	
+	if(playerOne.x < (timerBeam.posX + timerBeam.sizeX - gap))
+	{
+		playerOne.isDead = true;
+	}
+	if(playerTwo.x < (timerBeam.posX + timerBeam.sizeX - gap))
+	{
+		playerOne.isDead = true;
+	}
+}
+
+var h = 0, min = - 20, max = 20, dir = 1;
+function winningStep()
+{
+	var gap = 10;
+	crown.posY = encore.posY - 250;
+	if(h < min || h > max) dir *= -1;
+	h += dir;
+	crown.posY += h;
+	
+	surface.drawImage(crownImg, crown.posX, crown.posY, crown.sizeX, crown.sizeY);
+	surface.drawImage(encoreImg, encore.posX, encore.posY, encore.sizeX, encore.sizeY);
+	
+	if(playerOne.x + playerOne.sizeX > redCoin.x + gap && playerOne.x < redCoin.x + SIZE - gap &&
+		playerOne.y + playerOne.sizeY > redCoin.y + gap && playerOne.y < redCoin.y + SIZE - gap)
+	{
+		CoinSFX.play();
+		playerOne.isWin = true;
+	}
+	if(playerTwo.x + playerTwo.sizeX > blueCoin.x + gap && playerTwo.x < blueCoin.x + SIZE - gap &&
+		playerTwo.y + playerTwo.sizeY > blueCoin.y + gap && playerTwo.y < blueCoin.y + SIZE - gap)
+	{
+		CoinSFX.play();
+		playerTwo.isWin = true;
+	}
+	if(playerOne.isWin == true && playerTwo.isWin == true)
+	{
+		playerOne.x = 300;
+		playerOne.y = 500;
+		playerTwo.x = 250;
+		playerTwo.y = 200;
+		if(completed == 3)
+		{
+		completed++;
+		
+		}
+		playerOne.isWin = false;
+		playerTwo.isWin = false;
+		isWin = true;
+		backToMainMenu1();
+		
+	}
+	
+}
+
+
+function gameManager()
+{
+	moveSawX(saw1);
+	moveSawY(saw2);
+	moveSawX(saw3);
+	moveSawX(saw4);
+	buttonFunc(buttonZero);
+	buttonFunc(buttonOne);
+	buttonFunc(buttonTwo);
+	buttonFunc(buttonThree);
+	buttonFunc(buttonFour);
+	portalFunc(portal);
+	Death();
+	spikesF(playerOne);
+	spikesF(playerTwo);
+	addTiles();
+}
+//===========================================draw====================================================
+
+
+function render3()
+{
+	surface.clearRect(0,0,canvas.width,canvas.height);
+	surface.drawImage(dpsprites[0], 250, 440, 120, 150);
+	surface.drawImage(dpsprites[1], 900, 980, 150, 150);
+	surface.drawImage(dpsprites[2], 850, -450);
+	surface.drawImage(dpsprites[3], 1500, 550);
+	surface.drawImage(dpsprites[4], -100, 700);
+	surface.drawImage(dpsprites[5], 480, 820, 150, 150);
+	surface.drawImage(dpsprites[6], 2400, 700, 300, 300);
+
+	door(doorZero, buttonZero, 9);
+	door(doorOne, buttonOne, 9);
+	door(doorTwo, buttonTwo, 9);
+	door(doorThree, buttonThree, 9);
+
+	for (var r = 0; r < map4.rows; r++)
+	{
+		for (var c = 0; c < map4.cols; c++)
+		{
+			surface.drawImage(mapsprites[map4.tiles[r][c]], c * SIZE , r * SIZE, SIZE, SIZE );
+		}
+	}	
+	surface.drawImage(blueCoin.img, SIZE * blueCoinSprite, 0, SIZE, SIZE, blueCoin.x, blueCoin.y, SIZE, SIZE); //draw coin
+	surface.drawImage(redCoin.img, SIZE * redCoinSprite, 0, SIZE, SIZE, redCoin.x, redCoin.y, SIZE, SIZE);
+	var size =  190;
+	surface.drawImage(spikesImg, 130, 1507, size, 30);
+	surface.drawImage(spikesImg, 130 + size, 1507, size, 30);
+	surface.drawImage(spikesImg, 130 + size*2, 1507, size, 30);
+	surface.drawImage(spikesImg, 130 + size*3, 1507, size, 30);
+	//surface.drawImage(buttonImg, buttonZero.posX, buttonOne.posY, buttonOne.size, buttonOne.size);
+	surface.drawImage(buttonImg, buttonOne.posX, buttonOne.posY, buttonOne.size, buttonOne.size);
+	surface.drawImage(buttonImg, buttonTwo.posX, buttonTwo.posY, buttonTwo.size, buttonTwo.size);
+	surface.drawImage(buttonImg, buttonThree.posX, buttonThree.posY, buttonThree.size, buttonThree.size);
+	surface.drawImage(buttonImg, buttonFour.posX, buttonFour.posY, buttonFour.size, buttonFour.size);
+	surface.drawImage(portalImgFrom1, portal.fromX, portal.fromY, portal.sizeX, portal.sizeY);
+	surface.drawImage(portalImgTo1, portal.toX, portal.toY, portal.sizeX, portal.sizeY);
+	surface.drawImage(sawImg, saw1.curX, saw1.curY, saw1.size, saw1.size);
+	surface.drawImage(sawImg, saw2.curX, saw2.curY, saw2.size, saw2.size);
+	surface.drawImage(sawImg, saw3.curX, saw3.curY, saw3.size, saw3.size);
+	surface.drawImage(sawImg, saw4.curX, saw4.curY, saw4.size, saw4.size);
+	winningStep();
+	surface.drawImage(playerOne.img, SIZE * playerOne.sprite, SIZE * playerOne.dir, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
+	surface.drawImage(playerTwo.img, SIZE * playerTwo.sprite, SIZE * playerTwo.dir, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
+	northSouthEastWestShot();
+	moveTimerBeam();
+	if(timerBeam.enabled)
+	surface.drawImage(timerBeamImg, timerBeam.posX, -600, timerBeam.sizeX, timerBeam.sizeY);
 	
 }	
 
-function jump(player, gravityPower)
-{
-	if(player.isJumping)
-	{
-		player.y += player.velocityY;
-		player.y_velocity *= 0.7;
-		player.velocityY += gravityPower;
-	}
-}
-
-//==========================================GRAVITY=====================================================
-
-function gravity(player, gravityPower)
-{
-	if(!player.isGround)
-	{
-		player.y += gravityPower;
-	}
-
-
-	if(player.isGround && parseInt(player.y/SIZE) * SIZE < player.y)//fix position y;
-	{
-		player.y = parseInt(player.y/SIZE) * SIZE;
-	}
-}
-
-//===========================================COLLISION==================================================
-function groundCheck(player, gap, rayLength)//n is number of raycasts
-{
-	var bottomY = parseInt((player.y + player.sizeY + rayLength)/SIZE);
-	if(bottomY > map5.rows) return false;
-	
-	player.isGround = false;
-	if(map5.tiles[bottomY][parseInt((player.x + gap)/SIZE)] != 0) player.isGround = true; 
-	if(map5.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
-	if(map5.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
-	
-	if(player.isGround)
-	{
-		player.isJumping = false;
-		player.velocityY = 0;
-
-	}	
-}
-
-function rayCastCheck(player, Gap, rayLength)
-{
-	var centerPos = {x: player.x + player.sizeX/2, y: player.y + player.sizeY/2};
-	var leftRay = centerPos.x - (player.sizeX/2 + rayLength);
-	var rightRay = centerPos.x + (player.sizeX/2 + rayLength);
-	var upRay = centerPos.y - (player.sizeY/2 + rayLength);
-	var downRay = centerPos.y + (player.sizeY/2 + rayLength);
-
-	if(controls.left || controls.left2)
-	{
-		if( map5.tiles[parseInt(centerPos.y/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map5.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		if( map5.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(leftRay/SIZE)] != 0) return false;
-		return true;
-	}
-	else if(controls.right || controls.right2)
-	{
-		if( map5.tiles[parseInt(centerPos.y/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map5.tiles[parseInt((player.y + Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		if( map5.tiles[parseInt((player.y + SIZE - Gap)/SIZE)][parseInt(rightRay/SIZE)] != 0) return false;
-		return true;
-	}
-	else if(controls.up || controls.up2)
-	{
-		if( map5.tiles[parseInt(upRay/SIZE)][parseInt(centerPos.x/SIZE)] != 0) return false;
-		if( map5.tiles[parseInt(upRay/SIZE)][parseInt((player.x + Gap)/SIZE)] != 0) return false;
-		if( map5.tiles[parseInt(upRay/SIZE)][parseInt((player.x + SIZE - Gap)/SIZE)] != 0) return false;
-		return true;
-	}
-}
-
-function Death()
-{
-	if(playerOne.isDead || playerTwo.isDead) 
-	{
-		console.log("game over");
-		if(cheatcode == false)
-		{
-			isDead = true;
-		backToMainMenu();
-		}
-	}
-}
-
-//======================================================================================================
-
-function render()
-{
-	var cam = clamp(-playerOne.x + canvas.width/2, -2000, 0);
-		surface.clearRect(0,0,canvas.width,canvas.height);
-		surface.drawImage(laserDoorSp, laserDoor.x, laserDoor.y, laserDoor.sizeX, laserDoor.sizeY);
-		surface.drawImage(doorButtonSp, doorButton.x, doorButton.y, SIZE, SIZE);
-		for (var r = 0; r < map5.rows; r++)
-		{
-			for (var c = 0; c < map5.cols; c++)
-			{
-				surface.drawImage(sprites5[map5.tiles[r][c]], c * SIZE , r * SIZE, SIZE, SIZE );
-			}
-		}	
-		surface.drawImage(playerOne.img, SIZE * playerOne.sprite, SIZE * playerOne.dir, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
-		surface.drawImage(playerTwo.img, SIZE * playerTwo.sprite, SIZE * playerTwo.dir, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
-		surface.drawImage(saw1.img, saw1.curX, saw1.curY, saw1.size, saw1.size);
-		surface.drawImage(saw2.img, saw2.curX, saw2.curY, saw2.size, saw2.size);
-		surface.drawImage(saw3.img, saw3.curX, saw3.curY, saw3.size, saw3.size);
-		surface.drawImage(coin.img, SIZE*coinSprite, 0, SIZE, SIZE, coin.x, coin.y, SIZE, SIZE); //draw coin
-}
-
-window.addEventListener("keydown", controls.keyListner);
-window.addEventListener("keyup", controls.keyListner);
+window.addEventListener("keydown", controlOne.keyListner);
+window.addEventListener("keydown", controlTwo.keyListner);
+window.addEventListener("keyup", controlOne.keyListner);
+window.addEventListener("keyup", controlTwo.keyListner);
