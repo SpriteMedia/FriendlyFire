@@ -10,7 +10,20 @@ window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
 
 line.src = " ";
+
+GameWinSFX.addEventListener("ended", function(){
+	
+	soundEnded = true;
+	
+});
+if(soundEnded == false)
 GameWinSFX.play();
+
+else if(soundEnded == true)
+{
+	GameWinSFX.pause();
+}
+
 
 function onKeyDown(event)
 {
@@ -40,6 +53,8 @@ function checkpress()
 {
 	if(space == true)
 	{
+		soundEnded = true;
+		GameWinSFX.currentTime = 0;
 		backToMainMenu();
 	}
 	
