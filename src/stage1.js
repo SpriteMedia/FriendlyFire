@@ -183,6 +183,7 @@ intShot = setInterval(shotCheck, 2000);
 
 function shotCheck()
 {
+	Laser1SFX.play();	
 	if(redShotEnabled && redShotCurCnt < maxShot)
 		redShotCurCnt ++;
 	if(blueShotEnabled && blueShotCurCnt < maxShot)
@@ -235,7 +236,6 @@ function shotColCheck()
 				{
 					playerTwo.isDead = true;
 					console.log("Player2 died");
-					clearInterval(intShot);
 					return;
 				}
 		}
@@ -270,7 +270,6 @@ function shotColCheck()
 				{
 					playerOne.isDead = true;
 					console.log("Player1 died");
-					clearInterval(intShot);
 					return;
 				}
 		}
@@ -283,7 +282,7 @@ function northSouthEastWestShot()
 	{
 		if(i < redShotCurCnt)
 		{	
-			Laser1SFX.play();	
+			//	Laser1SFX.play();	
 			if(redShots[i].colRight)
 			{
 				redShots[i].right.posX += redShotSpeed;
@@ -434,7 +433,6 @@ function CoinCheck ()
 		
 		soundEnded = false;
 		isWin = true;
-		clearInterval(intShot);
 		backToMainMenu();
 	}
 }
@@ -445,7 +443,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike1Size.y)
 	{
 		player.isDead = true;
-		clearInterval(intShot);
 		console.log("game over");
 		return;
 	}
@@ -453,7 +450,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike2Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -461,7 +457,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike3Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -469,7 +464,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike4Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -477,7 +471,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike5Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -485,7 +478,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike6Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -493,14 +485,12 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike7Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
 	if (player.x < spike8Size.x + SIZE && player.x + player.sizeX > spike8Size.x
 	&& player.y + player.sizeY > spike8Size.y)
 	{
-		clearInterval(intShot);
 		player.isDead = true;
 		console.log("game over");
 		return;
@@ -508,7 +498,6 @@ function checkCollision(player)
 	if (player.x < spike9Size.x + SIZE && player.x + player.sizeX > spike9Size.x
 	&& player.y + player.sizeY > spike9Size.y)
 	{
-		clearInterval(intShot);
 		player.isDead = true;
 		console.log("game over");
 		return;
@@ -517,7 +506,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike10Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -525,14 +513,12 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike11Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
 	if (player.x < spike12Size.x + SIZE && player.x + player.sizeX > spike12Size.x
 	&& player.y + player.sizeY > spike12Size.y)
 	{
-		clearInterval(intShot);
 	player.isDead = true;
 	console.log("game over");
 	return;
@@ -540,7 +526,6 @@ function checkCollision(player)
 	if (player.x < spike13Size.x + SIZE && player.x + player.sizeX > spike13Size.x
 	&& player.y + player.sizeY > spike13Size.y)
 	{
-		clearInterval(intShot);
 	player.isDead = true;
 	console.log("game over");
 	return;
@@ -549,7 +534,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike14Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -557,7 +541,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike15Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -565,7 +548,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike16Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -573,7 +555,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike17Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -581,7 +562,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike19Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -589,7 +569,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike20Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -597,7 +576,6 @@ function checkCollision(player)
 	&& player.y + player.sizeY > spike21Size.y)
 	{
 	player.isDead = true;
-	clearInterval(intShot);
 	console.log("game over");
 	return;
 	}
@@ -606,7 +584,6 @@ function checkCollision(player)
 	{
 	player.isDead = true;
 	console.log("game over");
-	clearInterval(intShot);
 	return;
 	}
 	if (player.x < spike23Size.x + SIZE && player.x + player.sizeX > spike23Size.x
@@ -614,7 +591,6 @@ function checkCollision(player)
 	{
 	player.isDead = true;
 	console.log("game over");
-	clearInterval(intShot);
 	return;
 	}
 	if (player.x < spike24Size.x + SIZE && player.x + player.sizeX > spike24Size.x
@@ -622,23 +598,19 @@ function checkCollision(player)
 	{
 	player.isDead = true;
 	console.log("game over");
-	clearInterval(intShot);
 	return;
 	}
 	if (player.x < spike25Size.x + SIZE && player.x + player.sizeX > spike25Size.x
 	&& player.y + player.sizeY > spike25Size.y)
 	{
 	player.isDead = true;
-	console.log("game over");
-	clearInterval(intShot);
-	return;
+	console.log("game over");	return;
 	}
 	if (player.x < spike25Size.x + SIZE && player.x + player.sizeX > spike25Size.x
 	&& player.y + player.sizeY > spike25Size.y)
 	{
 	player.isDead = true;
 	console.log("game over");
-	clearInterval(intShot);
 	return;
 	}
 	if (player.x < spike26Size.x + SIZE && player.x + player.sizeX > spike26Size.x
@@ -646,7 +618,6 @@ function checkCollision(player)
 	{
 	player.isDead = true;
 	console.log("game over");
-	clearInterval(intShot);
 	return;
 	}
 	if (player.x < spike27Size.x + SIZE && player.x + player.sizeX > spike27Size.x
@@ -654,7 +625,6 @@ function checkCollision(player)
 	{
 	player.isDead = true;
 	console.log("game over");
-	clearInterval(intShot);
 	return;
 	}
 }

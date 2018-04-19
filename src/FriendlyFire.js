@@ -90,7 +90,7 @@ playerOne.y = 100;
 
 var playerTwo = new PLAYER();
 
-
+var menuDeath = false;
 var up, up2 = false;
 var left, left2 = false;
 var right, right2 = false;
@@ -123,8 +123,6 @@ var door4 = {img:null , x: 100, y:1590};
 
 
 var water     = {img: null, x: 640,  y: 1090, waterSprite: 0, waterMax: 17}; //EDIT
-var moveblock = {img: null, x: 705,  y: 1090,speed: 7, start: 705, end: 950, touching: false}; //EDIT
-var moveblock2= {img: null, x: 1340, y: 1090,speed: 7, start: 1095, end: 1340, touching: false}; //EDIT
 
 var monster   = {img: null, x: 545,  y: 550, speed: 7, start: 400, end: 700}; //EDIT
 var monster2  = {img: null, x: 670,  y: 700, speed: 7, start: 640, end: 1140}; //EDIT
@@ -133,13 +131,13 @@ var monster4  = {img: null, x: 1025, y: 900, speed: 7, start: 900, end: 1090}; /
 var monster5  = {img: null, x: 640,  y: 1280, speed: 11, start: 260, end: 640}; //EDIT
 var monster6  = {img: null, x: 350,  y: 1355, speed: 10, start: 350, end: 1000}; //EDIT
 var monster7  = {img: null, x: 690,  y: 1280, speed: 11, start: 690, end: 1090}; //EDIT
-var monster8  = {img: null, x: 400,  y: 1500, speed: 10, start: 1500, end: 1600}; //EDIT
-var monster9  = {img: null, x: 640,  y: 1500, speed: 10, start: 1500, end: 1600}; //EDIT
-var monster10 = {img: null, x: 850,  y: 1500, speed: 10, start: 1500, end: 1600}; //EDIT
+var monster8  = {img: null, x: 400,  y: 1500, speed: 8, start: 1500, end: 1600}; //EDIT
+var monster9  = {img: null, x: 640,  y: 1500, speed: 8, start: 1500, end: 1600}; //EDIT
+var monster10 = {img: null, x: 850,  y: 1500, speed: 8, start: 1500, end: 1600}; //EDIT
 
 //██████████████████████████████PLAYER DATA █████████████████████████████████████████████
 
-var images = ["empty", "playerOne", "Door", "grass", "shop", "Shopkeep", "dirt", "dooropen", "tree", "monster", "wateranimation", "movingblock"];
+var images = ["empty", "playerOne", "Door", "grass", "shop", "Shopkeep", "dirt", "dooropen", "tree", "monster", "wateranimation"];
 var sprites = [];
 var SIZE = 64; 
 var map1 = {
@@ -165,7 +163,7 @@ var map1 = {
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[3,3,0,0,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3], //third floor
+		[3,3,0,0,3,3,3,3,3,3,0,0,3,0,0,3,0,3,0,0,3,0,0,3,3,3,3,3,3,3], //third floor
 		[6,6,0,0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -192,24 +190,16 @@ function objectCol(player, object, hitboxX, hitboxY)
 	if(player.x < object.x + hitboxX && player.x + hitboxX > object.x && player.y + hitboxY > object.y && player.y < object.y + hitboxY)
 	{
 		player.isDead = true;
-		//console.log("game over");
 	}
 }
 
-function movingBox(player, object)
+function secondfuckingfunction (player, object, size) //not to you fil
 {
-	//console.log(object.touching);
-	if (player.x < object.x + SIZE && player.x + SIZE > object.x && player.y + SIZE > object.y && player.y + SIZE < object.y + 20)
-		object.touching = true;
-	else
-		object.touching = false;
-	
-	if (object.touching)
+	if(player.x + size >  object.x && player.x < object.x + 832 && player.y + size > object.y + 15 && player.y < object.y + size)
 	{
-		player.x = object.x;
+		player.isDead = true;
 	}
 }
-
 
 function doorInteract()
 {
@@ -263,14 +253,16 @@ function onKeyDown(event)
 				playerTwo.isDead = false; 
 			}
 			cheatcode = !cheatcode;
+			completed = 4;
 			console.log("cheatcode: ", cheatcode, completed);
 			break;
 			//completed = completedStore;
-		case 27: // escape	
-			escape = true;
-			break;
+		// case 27: // escape	
+			// escape = true;
+			// break;
 	}
-	//if(playerOne.img != sprites[0]) { //make this more efficient 
+	if(playerOne.img != sprites[0]) { //make this more efficient 
+		
 		switch (event.keyCode)
 		{
 		
@@ -282,9 +274,12 @@ function onKeyDown(event)
 			break;
 		case 87: //W
 			if(playerOne.isJumpOnce == true)
-			playerOne.jumpOnce = true;
-			up = true;
+			{
+				playerOne.jumpOnce = true;
+				up = true;
+			}
 			break;
+			z
 		case 37: //left2
 			left2 = true;
 			break;
@@ -293,27 +288,21 @@ function onKeyDown(event)
 			break;
 		case 38: //up2
 			if(playerTwo.isJumpOnce == true)
-			playerTwo.jumpOnce = true;
-			up2 = true;
+			{
+				playerTwo.jumpOnce = true;
+				up2 = true;
+			}
 			break;		
+			}
 		}
-	//}
-	// else if(playerOne.img = sprites[0])
-	// {
-		// switch (event.keyCode)
-		// {
-			// case 32:
-			// UISFX.play();
-			// console.log("keypress");
-			// textcount++;
-				// break;
-		// }
-	// }
+
 	switch (event.keyCode)
 		{
 			case 32:
 			if(talking == true)
 			{
+				UISFX.pause();
+				UISFX.currentTime = 0;	
 			UISFX.play();
 			console.log("keypress");
 			textcount++;
@@ -349,9 +338,9 @@ function onKeyUp(event)
 			playerTwo.jumpOnce = false;
 			break;
 			
-		case 27: // escape	
-		escape = false;
-		break;	
+		// case 27: // escape	
+		// escape = false;
+		// break;	
 			
 		//ADD PLAYER 2 INPUT
 	}
@@ -396,8 +385,6 @@ monster9.img = sprites[9];
 monster10.img = sprites[9];
 
 water.img = sprites[10];
-moveblock.img = sprites[11];
-moveblock2.img = sprites[11];
 
 //EDIT
 var treeG =  new Image();
@@ -441,7 +428,7 @@ function update()
 	level();
 	
 }
-function gravity(player, gravityPower, restrict)
+function  gravity(player, gravityPower, restrict)
 {
 	if(restrict && player.y > restrict) return;
 	
@@ -466,7 +453,6 @@ function groundCheck(player, gap, rayLength, map)//n is number of raycasts
 	if(map.tiles[bottomY][parseInt((player.x + gap + 5)/SIZE)] != 0) player.isGround = true; 
 	if(map.tiles[bottomY][parseInt((player.x + player.sizeX/2)/SIZE)] != 0) player.isGround = true;
 	if(map.tiles[bottomY][parseInt((player.x + (player.sizeX - gap))/SIZE)] != 0) player.isGround = true;
-	if(moveblock.touching || moveblock2.touching) player.isGround = true; 
 	
 	if(player.isGround)
 	{
@@ -492,6 +478,7 @@ function reset()
 	console.log(playerOne.x);
 	console.log(playerOne.y);
 	isDead = false;
+	menuDeath = false;
 	isWin = false;
 	line.src = "../music/Ly.mp3";
 }
@@ -545,10 +532,10 @@ function level()
 	}
 	else if(stage == 0)
 	{
-		if(entered == 1)
+		if(entered == 1 || menuDeath)
 		{
 			reset();
-		}
+		}	
 		canvas.style.backgroundImage = "url('../img/mainbg.png')";
 		animator(playerOne, left, right); 
 		playerController(playerOne, left, right, up, map1);
@@ -570,9 +557,8 @@ function level()
 		objectCol(playerOne, monster8, SIZE, SIZE);
 		objectCol(playerOne, monster9, SIZE, SIZE);
 		objectCol(playerOne, monster10, SIZE, SIZE);
-		objectCol(playerOne, water, SIZE*13, SIZE);
-		movingBox(playerOne, moveblock);
-		movingBox(playerOne, moveblock2);
+		//objectCol(playerOne, water, 800, SIZE);
+		secondfuckingfunction (playerOne, water, 64)
 	}
 	else if(stage == 1)		
 	{
@@ -615,7 +601,6 @@ function level()
 		gameManager();
 		playerController(playerOne, left, right, up, map4);
 		playerController(playerTwo, left2, right2, up2, map4);
-		//draw();
 		render3();
 		Death();
 			
@@ -699,6 +684,7 @@ function Death1()
 		{
 			soundEnded = false;
 			isDead = true;
+			menuDeath = true;
 			playerOne.x = 700; 
 			playerOne.y = 100;			
 		}
@@ -838,7 +824,7 @@ function mainmenu()
 	document.body.appendChild(imported);
 	
 }
-//████████████████████████████████████████████████████████████████████████
+///////////////////////////// ANIMATION /////////////////////////////////
 function animator(player, leftInput, rightInput, upInput)
 {
 
@@ -936,14 +922,6 @@ function colObjectsAnim()
 	monster10.y += monster9.speed;
 	if(monster10.start > monster10.y||monster10.end < monster10.y)
         monster10.speed *= -1;
-	
-	moveblock.x += moveblock.speed;
-    if(moveblock.start > moveblock.x||moveblock.end < moveblock.x)
-        moveblock.speed *= -1;
-	
-	moveblock2.x += moveblock2.speed;
-    if(moveblock2.start > moveblock2.x||moveblock2.end < moveblock2.x)
-        moveblock2.speed *= -1;	
 }
 
 function WaterAnim ()
@@ -971,24 +949,9 @@ function draw1() {
 
     surface.translate( camX, camY );                                                                              
 
-    //Draw everything    
 
-/*
-function Lerp (S, E, T) //S = Vo,  E=V1, T = time or speed
-{
-		return (S * (1-T) + (E * T)
+
 }
-
-function CameraMov ()
-{
-	
-}
-*/
-
-	
-}
-
-
 function render1()
 {
 		surface.clearRect(0,0,canvas.width,canvas.height);
@@ -1010,8 +973,7 @@ function render1()
 		surface.drawImage(monster8.img, monster8.x, monster8.y);
 		surface.drawImage(monster9.img, monster9.x, monster9.y);
 		surface.drawImage(monster10.img, monster10.x, monster10.y);
-		
-		
+
 		
 		surface.drawImage(door1.img, 0, 0, SIZE, SIZE, door1.x, door1.y, SIZE, 74);
 		surface.drawImage(door2.img, 0, 0, SIZE, SIZE, door2.x, door2.y, SIZE, 74);
@@ -1035,8 +997,7 @@ function render1()
 		}	
 		
 		//FOREGROUND
-		surface.drawImage(moveblock.img, moveblock.x, moveblock.y);
-		surface.drawImage(moveblock2.img, moveblock2.x, moveblock2.y);
+
 		surface.drawImage(bush, 280, 534); //first row
 		surface.drawImage(treeO, 250, 663); //second row
 		

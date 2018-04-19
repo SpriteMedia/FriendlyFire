@@ -20,7 +20,7 @@ GameOverSFX.addEventListener("ended", function(){
 if(soundEnded == false)
 GameOverSFX.play();
 
-else(soundEnded == true)
+else if(soundEnded == true)
 GameOverSFX.pause();
 
 function onKeyDown(event)
@@ -53,7 +53,6 @@ function checkpress()
 		soundEnded = true;
 		GameOverSFX.currentTime = 0;
 		backToMainMenu();
-		reset();
 	}
 	
 }

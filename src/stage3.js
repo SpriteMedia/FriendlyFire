@@ -137,6 +137,7 @@ intShot = setInterval(shotCheck,1000);
 
 function shotCheck()
 {
+	Laser1SFX.play();	
 	ShotCurCnt++;
 }
 
@@ -162,7 +163,6 @@ function ShotColCheck()
                 && playerTwo.y < centerY && playerTwo.y + playerTwo.sizeY > centerY)
 			{
 				playerTwo.isDead = true;
-				clearInterval(intShot);
 				return;
 			}
         }
@@ -188,7 +188,6 @@ function ShotColCheck()
                 && playerOne.y < centerY && playerOne.y + playerOne.sizeY > centerY)
 			{
               playerOne.isDead = true;
-			  clearInterval(intShot);
 			  return;
 			}
         }
@@ -199,7 +198,7 @@ function Shooting()
 {
 	for(var i = 0; i < maxShot; i++)
 	{
-		Laser1SFX.play();
+		
 		if(i < ShotCurCnt)
 		{
 		redShots[i].right.posX += bulletSpeed;
@@ -376,14 +375,12 @@ function moveSawX(saw)
 		playerOne.y + playerOne.sizeY > saw.curY + gap && playerOne.y < saw.curY + saw.size - gap )
 		{
 			playerOne.isDead = true;
-			clearInterval(intShot);
 			return;
 		}
 	if(playerTwo.x + playerTwo.sizeX > saw.curX + gap && playerTwo.x < saw.curX + saw.size - gap &&
 		playerTwo.y + playerTwo.sizeY > saw.curY + gap && playerTwo.y < saw.curY + saw.size -gap )
 		{
 			playerTwo.isDead = true;
-			clearInterval(intShot);
 			return;
 		}
 }
@@ -410,13 +407,11 @@ function collision()
 	if(raser.x > playerOne.x)
 	{
 		playerOne.isDead = true;
-		clearInterval(intShot);
 		return;
 	}
 	else if(raser.x > playerTwo.x)
 	{
 		playerTwo.isDead = true;
-		clearInterval(intShot);
 		return;
 	}
 	
@@ -466,14 +461,12 @@ function collision()
 	{
 		playerOne.isDead = true;
 		redShotEnabled = false;
-		clearInterval(intShot);
 		return;
 	}
 	else if(playerTwo.y + playerTwo.sizeY > canvas.height - 100)
 	{
 		playerTwo.isDead = true;
 		blueShotEnabled = false;
-		clearInterval(intShot);
 		return;
 	}	
 }
