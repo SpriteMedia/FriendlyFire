@@ -10,18 +10,7 @@ window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
 
 line.src = " ";
-
-
-GameOverSFX.addEventListener("ended", function(){
-	soundEnded = true;
-	
-});
-
-if(soundEnded == false)
 GameOverSFX.play();
-
-else(soundEnded == true)
-GameOverSFX.pause();
 
 function onKeyDown(event)
 {
@@ -50,10 +39,7 @@ function checkpress()
 {
 	if(space == true)
 	{
-		soundEnded = true;
-		GameOverSFX.currentTime = 0;
 		backToMainMenu();
-		reset();
 	}
 	
 }

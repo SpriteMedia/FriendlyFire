@@ -47,6 +47,7 @@ var saw4 = {size:64, fromX:1650, fromY: 870, toX: 1300, toY: 870, curX:1300, cur
 //0, -600, 60, 3500
 var timerBeam = {sizeX:60, sizeY:3500, posX:-100, speed: 3.5, enabled: false};
 var crown = {sizeX: 100, sizeY: 100, posX: 2750, posY: 950, speed: 3};
+var encore = {sizeX: 1000, sizeY: 160, posX: 2050, posY: 1200, speed: 7};
 sawArr = [];
 
 
@@ -104,7 +105,28 @@ var map4 = {
 	],
 };
 
+
+var blueCoin = {img:null, x: encore.posX + 730, y: encore.posY - 30}; 
+var redCoin = {img:null, x: encore.posX + 460, y: encore.posY - 30};
+var blueCoinSprite = 0;
+var redCoinSprite = 3;
 var coinMax = 16;
+
+var redShots = [];
+var blueShots = [];
+var redShotEnabled = false;
+var blueShotEnabled = false;
+var redShotCurCnt = 0;
+var redShotReCnt = 0;
+var blueShotCurCnt = 0;
+var blueShotReCnt = 0;
+var maxShot = 1111;
+var redShotSpeed = 12;
+var blueShotSpeed = 12;
+var shotSizeX = 25;
+var shotSizeY = 25;
+
+
 setInt = setInterval(update, 33.34);
 
 //=======================================INITIALIZE SPIRTES ============================================
@@ -338,7 +360,67 @@ function northSouthEastWestShot()
 	}
 	shotColCheck();
 }
+																			   //sprites4heet for coin
+//===========================================UPDATE=====================================================
 
+
+
+
+
+
+//===========================================CONTROL INPUT ================================================
+controlOne = {
+	up: false,  
+	left: false,  
+	right: false, 
+	escape: false,
+	keyListner:function(event) 
+	{
+		var keystate = (event.type == "keydown")?true:false;
+		
+		switch(event.keyCode) 
+		{
+			case 37: //left
+				controlOne.left = keystate;
+			break;
+			case 39: //right
+				controlOne.right = keystate;
+			break;
+			case 38: //up
+				controlOne.up = keystate;
+			break;
+			case 27: // escape
+				controlOne.escape = keystate;
+			break;
+			
+				
+		}
+	}
+}
+controlTwo = {
+	up: false, 
+	left: false, 
+	right: false, 
+	keyListner:function(event) 
+	{
+		var keystate = (event.type == "keydown")?true:false;
+		
+		switch(event.keyCode) 
+		{
+			case 65: //A
+				controlTwo.left = keystate;
+			break;
+			case 68: //D
+				controlTwo.right = keystate;
+			break;
+			case 87: //W
+				controlTwo.up = keystate;
+			break;
+			case 37: //left
+			break;
+		}
+	}
+}
 
 
 //================================================ANIMATION=============================================
@@ -374,6 +456,36 @@ function draw() {
     //Draw everything
 }
 
+
+//============================================CONTROLLER=================================================
+
+function playerController3(player, control) 
+{
+	if (player.x > 0 && control.left == true && rayCastCheck2(player, 3, 5, control, map4))
+		player.x -= player.speed;
+	if (control.right == true && player.x < map4.cols * SIZE && rayCastCheck2(player, 3, 5, control, map4))
+		player.x += player.speed;
+	if (player.y > 0 && control.up == true && rayCastCheck2(player, 3, 5, control, map4)) //jump
+	{
+		if(!player.isJumping)
+		{
+			JumpSFX.play();
+			player.isJumping = true;
+			player.velocityY = -20;
+			control.up = false;
+		}
+	}
+	
+	if(control.escape == true)
+	{
+	backToMainMenu1();
+	}
+	//console.log(player.velocityY);
+	var gravityPower = 3;
+	jump(player, gravityPower);
+	gravity(player, 10, 2000);
+	groundCheck(player, 6, gravityPower, map4);//	this.player
+}
 
 function backToMainMenu1()
 {
@@ -593,7 +705,6 @@ function winningStep()
 		completed++;
 		
 		}
-		soundEnded = false;
 		playerOne.isWin = false;
 		playerTwo.isWin = false;
 		isWin = true;
@@ -675,4 +786,7 @@ function render3()
 	
 }	
 
-
+window.addEventListener("keydown", controlOne.keyListner);
+window.addEventListener("keydown", controlTwo.keyListner);
+window.addEventListener("keyup", controlOne.keyListner);
+window.addEventListener("keyup", controlTwo.keyListner);

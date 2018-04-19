@@ -8,7 +8,7 @@ line.src = "../music/Sao.ogg";
 //var playerOne = {img:null, x:200, y: 384, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false, isDead: false};  
 //var playerTwo = {img:null, x:256, y: 576, speed: 10, sizeX: 64, sizeY: 64, isGround: false, velocityY:0, isJumping: false, isDead: false};
 var background = {img:null};
-	
+var controls;                     //Object for buttons
 
 playerOne.x = 200;
 playerOne.y = 384;
@@ -18,7 +18,7 @@ playerTwo.y = 576;
 //---------------------------------------------GAME DATA ------------------------------------------------------------------------
 
 //to add asset, place name here of image saved under img folder and call it in map5 array by its placement here. ex: "dirt" = 2
-var images5 = ["empty","playerTwo", "Tile", "Tile2" ,"Tile3", "Tile4", "Tile5","Trampoline", "purplecoin", "playerOne", "bkg2", "Raser","pause", "saw", "redcoin", "empty"]; 
+var images5 = ["empty","playerTwo", "Tile", "Tile2" ,"Tile3", "Tile4", "Tile5","Trampoline", "purplecoin", "playerOne", "bkg2", "Raser","pause", "saw"]; 
 var sprites5 = []; 
 var SIZE = 64; 
 var map5 = {
@@ -45,20 +45,18 @@ var map5 = {
 		[0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,6,6,6,6,0,0,0,6,6,6,6,0,0,0,3,7,3,0,0,0,2,5,2,0],
 		[0,0,0,3,3,3,0,0,0,4,7,4,0,0,0,0,6,6,6,6,5,7,5,6,6,6,6,0,0,0,3,3,3,0,0,0,2,5,2,0],
 		[0,0,0,3,3,3,0,0,0,5,5,5,0,0,0,0,6,6,6,6,5,5,5,6,6,6,6,0,0,0,3,3,3,0,0,0,2,2,2,0],
-		[15,15,15,3,3,3,15,15,15,4,4,4,15,15,15,15,6,6,6,6,15,15,15,6,6,6,6,15,15,15,5,5,5,15,15,15,2,2,2,15],
+		[0,0,0,3,3,3,0,0,0,4,4,4,0,0,0,0,6,6,6,6,0,0,0,6,6,6,6,0,0,0,5,5,5,0,0,0,2,2,2,0],
 	],
 	
 };
 
 //============================
 var coin = {img:null, x: 2368, y: 448};
-var coin2 = {img: null, x: 2400, y: 448};
 var saw1 = {img:null, size:64, fromX:620, fromY: 330, toX: 400, toY: 330, curX:620, curY: 300, speed: 10};
 var saw2 = {img:null, size:64, fromX:2020, fromY: 500, toX: 770, toY: 1070, curX:770, curY: 385, speed: 13};
 var saw3 = {img:null, size:64, fromX:2020, fromY: 500, toX: 770, toY: 1070, curX:770, curY: 512, speed: 9};
 var button = {img:null, size:64, x: 2112, y:512};
 var coinSprite = 0;
-var coinSprite2 = 0;
 var coinMax = 16;
 var TramCollider = {x:0, y:0, width: 50, height:60};
 var TramCollider1 = {x:0, y:0, width: 50, height:60};
@@ -197,22 +195,18 @@ function Shooting()
 		if(i < ShotCurCnt)
 		{
 		redShots[i].right.posX += bulletSpeed;
-		if(redShotEnabled == true)
 		surface.drawImage(redHShot, redShots[i].right.posX, 
 		redShots[i].right.posY, bulletSize, bulletSize);
 		
 		redShots[i].left.posX -= bulletSpeed;
-		if(redShotEnabled == true)
 		surface.drawImage(redHShot, redShots[i].left.posX, 
 		redShots[i].left.posY, bulletSize, bulletSize);
 		
 		blueShots[i].up.posY -= bulletSpeed;
-		if(blueShotEnabled == true)
 		surface.drawImage(blueVShot, blueShots[i].up.posX, 
 		blueShots[i].up.posY, bulletSize, bulletSize);	
 		
 		blueShots[i].down.posY += bulletSpeed;
-		if(blueShotEnabled == true)
 		surface.drawImage(blueVShot, blueShots[i].down.posX, 
 		blueShots[i].down.posY, bulletSize, bulletSize);	
 		}
@@ -252,7 +246,7 @@ function TramplineColCheck()
 			TrampolineSFX.play();
 			playerTwo.isJumping = true;
 			playerTwo.velocityY = -75;
-			up2 = false;
+			controls.up2 = false;
 		}
 		
 	if(!(playerTwo.y > (TramCollider1.y + gap) ||
@@ -263,7 +257,7 @@ function TramplineColCheck()
 			TrampolineSFX.play();
 			playerTwo.isJumping = true;
 			playerTwo.velocityY = -75;
-			up2 = false;
+			controls.up2 = false;
 		}
 
 	if(!(playerTwo.y > (TramCollider2.y + gap) ||
@@ -274,7 +268,7 @@ function TramplineColCheck()
 			TrampolineSFX.play();
 			playerTwo.isJumping = true;
 			playerTwo.velocityY = -75;
-			up2 = false;
+			controls.up2 = false;
 		}		
 		
 	if(!(playerOne.y > (TramCollider.y + gap) ||
@@ -285,7 +279,7 @@ function TramplineColCheck()
 		TrampolineSFX.play();
 		playerOne.isJumping = true;
 		playerOne.velocityY = -75;
-		up = false;
+		controls.up = false;
 	}
 	
 	if(!(playerOne.y > (TramCollider1.y + gap) ||
@@ -296,7 +290,7 @@ function TramplineColCheck()
 			TrampolineSFX.play();
 			playerOne.isJumping = true;
 			playerOne.velocityY = -75;
-			up = false;
+			controls.up = false;
 		}
 
 	if(!(playerOne.y > (TramCollider2.y + gap) ||
@@ -307,7 +301,7 @@ function TramplineColCheck()
 			TrampolineSFX.play();
 			playerOne.isJumping = true;
 			playerOne.velocityY = -75;
-			up = false;
+			controls.up = false;
 		}	
 }
 
@@ -338,8 +332,7 @@ for (var i = 0; i < images5.length; i++)                                        
 																									   //animated sprite stay outside of map5 array
 playerOne.img = sprites5[9];                                                                            //sprites5heet for playerOne
 playerTwo.img = sprites5[1];																			   //sprites5heet for playerTwo
-coin.img = sprites5[8];
-coin2.img = sprites5[14];																				   //sprites5heet for coin
+coin.img = sprites5[8];																				   //sprites5heet for coin
 background.img = sprites5[10];
 raser.img = sprites5[11];
 saw1.img = sprites5[13];
@@ -347,14 +340,71 @@ saw2.img = sprites5[13];
 saw3.img = sprites5[13];
 button.img = sprites5[15];
 
+//================================================ANIMATION=============================================
+function animator(player, leftInput, rightInput, upInput)
+{
+
+    console.log("direction" + player.maxSprite);
+    console.log("facing" + player.facing);
+
+    player.sprite++;
+    if(player.sprite >= player.maxSprite)
+    {
+        player.sprite = 0;
+    }
+     if(leftInput)
+    {
+        player.dir = 2;
+        player.facing = 0;
+        player.maxSprite = 18;
+
+    }
+    if (!leftInput && player.facing == 0)
+    {
+        player.dir = 0;
+    }
+    if(rightInput)
+    {
+        player.dir = 3;
+        player.facing = 1;
+        player.maxSprite = 18;
+
+    }
+    if (!rightInput && player.facing == 1)
+    {
+        player.dir = 1;
+    }
+    if (!rightInput && !leftInput && player.maxSprite!= 11)
+    {
+        player.maxSprite = 11;
+    }
+    if (upInput && player.facing == 0)
+    {
+        player.dir = 4;
+        player.sprite = 2; 
+    }
+    if (upInput && player.facing == 1)
+    {
+        player.dir = 4;
+        player.sprite = 0; 
+    }
+    if (!upInput && !player.isGround && player.facing == 0)
+    {
+        player.dir = 4;
+        player.sprite = 3;
+    }
+    if (!upInput && !player.isGround && player.facing == 1)
+    {
+        player.dir = 4;
+        player.sprite = 1;
+    }
+}
+
 function animateCoin ()
 {
 	coinSprite++;
-	coinSprite2++;
 	if(coinSprite == coinMax)
 		coinSprite = 0;
-	if(coinSprite2 == coinMax)
-		coinSprite2 = 0;
 }
 //==============================================CAMERA==================================================
 
@@ -427,17 +477,18 @@ function collision()
 	{
 		if(completed == 2)
 		{
-			completed++;
+		completed++;
 		}
 		CoinSFX.play();
-		playerOne.isWin = true;
+		isWin = true;
 		console.log("You Win");
+		backToMainMenu();
 	}
 	
-	if(!(playerTwo.y > (coin2.y) ||
-	(playerTwo.y + playerTwo.sizeY) < (coin2.y)||
-	playerTwo.x > (coin2.x + 30) ||
-	(playerTwo.x + playerTwo.sizeX) < coin2.x + 30))
+	if(!(playerTwo.y > (coin.y) ||
+	(playerTwo.y + playerTwo.sizeY) < (coin.y)||
+	playerTwo.x > (coin.x + 30) ||
+	(playerTwo.x + playerTwo.sizeX) < coin.x + 30))
 	{
 		if(completed == 2)
 		{
@@ -445,33 +496,63 @@ function collision()
 		}
 		CoinSFX.play();
 		console.log("You Win");
-		playerTwo.isWin = true;
-	}
-	if(playerTwo.isWin == true && playerOne.isWin == true)
-	{
-		soundEnded = false;
 		isWin = true;
 		backToMainMenu();
 	}
 	
-	if(playerOne.y + playerOne.sizeY > canvas.height - 100)
-	{
+	if(playerOne.y + playerOne.sizeY > canvas.height - 20)
 		playerOne.isDead = true;
-		redShotEnabled = false;
-	}
-	else if(playerTwo.y + playerTwo.sizeY > canvas.height - 100)
-	{
+	else if(playerTwo.y + playerTwo.sizeY > canvas.height - 20)
 		playerTwo.isDead = true;
-		blueShotEnabled = false;
-	}	
 }
+//============================================CONTROLLER=================================================
 
+function playerController(player, inleft, inright, inup, inescape) 
+{
+	if (player.x > 0 && inleft == true && rayCastCheck(player, 3, player.speed/2, map5))
+		player.x -= player.speed;
+	if (inright == true && player.x < map5.cols * SIZE && rayCastCheck(player, 3, player.speed/2, map5))
+		player.x += player.speed;
+	if (player.y > 0 && inup == true && rayCastCheck(player, 3, player.speed/2, map5)) //jump
+	{
+		if(!player.isJumping)
+		{
+			JumpSFX.play();
+			player.isJumping = true;
+			player.velocityY = -30;
+			controls.up = false;
+			controls.up2 = false;
+		}
+	}
+	if(inescape == true)
+	{
+	backToMainMenu();
+	}
+	
+	var gravityPower = 3;
+	jump(player, gravityPower);
+	gravity(player, 10, 0);
+	groundCheck(player, 3, gravityPower, map5);//	this.player
+}
 
 function backToMainMenu()
 {
 		stage = 0;
+	
 }	
 
+/* Death()
+{
+	if(playerOne.isDead || playerTwo.isDead) 
+	{
+		console.log("game over");
+		if(cheatcode == false)
+		{
+			isDead = true;
+		backToMainMenu();
+		}
+	}
+}*/
 
 //======================================================================================================
 
@@ -492,10 +573,9 @@ function render()
 		surface.drawImage(saw2.img, saw2.curX, saw2.curY, saw2.size, saw2.size);
 		surface.drawImage(saw3.img, saw3.curX, saw3.curY, saw3.size, saw3.size);
 		surface.drawImage(coin.img, SIZE*coinSprite, 0, SIZE, SIZE, coin.x, coin.y, SIZE, SIZE); //draw coin
-		surface.drawImage(coin2.img, SIZE*coinSprite2, 0, SIZE, SIZE, coin2.x, coin2.y, SIZE, SIZE); //draw coin
-		if(playerOne.y < canvas.height - 150)
 		surface.drawImage(playerOne.img, SIZE * playerOne.sprite, SIZE * playerOne.dir, SIZE, SIZE, playerOne.x, playerOne.y, SIZE, SIZE);
-		if(playerTwo.y < canvas.height - 150)
 		surface.drawImage(playerTwo.img, SIZE * playerTwo.sprite, SIZE * playerTwo.dir, SIZE, SIZE, playerTwo.x, playerTwo.y, SIZE, SIZE);
 }
 
+window.addEventListener("keydown", controls.keyListner);
+window.addEventListener("keyup", controls.keyListner);

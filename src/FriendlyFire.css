@@ -1,0 +1,24 @@
+body
+{
+	background-color: gray;
+}
+
+
+#game
+{
+	background-color: white;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 100px;
+	width: 1280px;
+	height: 640px;
+	border-style: double;
+}
+
+#canvas
+{
+	background-color: black;
+	width: 100%;
+	height: 100%;
+}
+
