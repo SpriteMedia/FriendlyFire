@@ -92,10 +92,6 @@ var coin = {img:null, x: 125, y: 925};
 var coinSprite = 0;
 var coinMax = 16;
 
-var sdSpike = new Image();
-sdSpike.src = '../img/Spike_Left&Right.png';
-
-var Spike = {x:1850, y:580};
 
 setInt = setInterval(update, 33.34);
 
@@ -470,13 +466,6 @@ function checkCollision(player)
     console.log("game over7");
 	return;
 	}
-	if (player.x < Spike.x + SIZE && player.x + player.sizeX > Spike.x
-    && player.y + player.sizeY > Spike.y && player.y < Spike.y + SIZE)
-    {
-    player.isDead = true;
-    console.log("game over8");
-	return;
-	}
     if (player.x < spike2.x + SIZE && player.x + player.sizeX > spike2.x
     && player.y + player.sizeY > spike2.y && player.y < spike2.y + SIZE)
     {
@@ -588,7 +577,6 @@ function render()
 		surface.drawImage(spike, spike12.x, spike12.y, SIZE, SIZE);
 		surface.drawImage(spike, spike13.x, spike13.y, SIZE, SIZE);
 		
-		surface.drawImage(sdSpike, Spike.x, Spike.y, SIZE, SIZE);
 		
 		for (var r = 0; r < map2.rows; r++)
 		{
